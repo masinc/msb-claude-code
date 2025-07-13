@@ -93,12 +93,12 @@ function generateDevToolsSetup(packageOptions?: PackageOptions): string {
     {
       comment: "Install packages using WinGet",
       notification: "Winget package installation in progress...",
-      scriptPath: "install-winget-package.ps1"
+      scriptPath: "install-winget-defaults.ps1"
     },
     {
       comment: "Install additional WinGet packages",
       notification: "Installing additional WinGet packages...",
-      scriptPath: "install-winget-packages.ps1"
+      scriptPath: "install-winget-custom.ps1"
     },
     {
       comment: "Install scoop packages",
@@ -148,7 +148,7 @@ function generatePackageInstallations(packageOptions: PackageOptions): string {
     steps.push(generateScriptStep({
       comment: "Install WinGet packages",
       notification: "Installing WinGet packages...",
-      scriptPath: "install-winget-packages.ps1"
+      scriptPath: "install-winget-custom.ps1"
     }));
   }
   
