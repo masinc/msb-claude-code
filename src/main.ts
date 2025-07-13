@@ -78,7 +78,7 @@ function createDefaultConfig(outputDir: string): WSBConfig {
     protectedClient: "Enable",
     printScreen: "Enable",
     clipboardRedirection: "Enable",
-    memoryInMB: "4096",
+    memoryInMB: "8192",
   };
 }
 
