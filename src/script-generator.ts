@@ -6,17 +6,32 @@ interface ScriptSection {
   scriptPath: string;
 }
 
-export function generateInitScript(presetConfig: PresetConfig, workspaceName?: string): string {
+interface PackageOptions {
+  mise?: string;
+  scoop?: string;
+  wingetId?: string;
+}
+
+export function generateInitScript(presetConfig: PresetConfig, workspaceName?: string, packageOptions?: PackageOptions): string {
   const sections: string[] = [];
   
   // Always start with base setup and progress system
   sections.push(generateBaseSetup());
   
+  // Set up package variables if any packages are specified
+  if (packageOptions && (packageOptions.mise || packageOptions.scoop || packageOptions.wingetId)) {
+    sections.push(generatePackageVariables(packageOptions));
+  }
+  
   if (presetConfig.includeDevTools) {
     // Full development environment setup
-    sections.push(generateDevToolsSetup());
+    sections.push(generateDevToolsSetup(packageOptions));
     sections.push(generateFirewallSetup());
   } else {
+    // Package installations before firewall (if any)
+    if (packageOptions) {
+      sections.push(generatePackageInstallations(packageOptions));
+    }
     // Firewall-only setup
     sections.push(generateFirewallSetup());
   }
@@ -44,7 +59,26 @@ Start-Transcript -Path "C:\\init.log" -Append
 Invoke-Notification -Message "Starting initialization..." -Title "Windows Sandbox"`;
 }
 
-function generateDevToolsSetup(): string {
+function generatePackageVariables(packageOptions: PackageOptions): string {
+  const lines: string[] = [];
+  lines.push("# Set package variables");
+  
+  if (packageOptions.mise) {
+    lines.push(`$env:MISE_PACKAGES = "${packageOptions.mise}"`);
+  }
+  
+  if (packageOptions.scoop) {
+    lines.push(`$env:SCOOP_PACKAGES = "${packageOptions.scoop}"`);
+  }
+  
+  if (packageOptions.wingetId) {
+    lines.push(`$env:WINGET_PACKAGE_IDS = "${packageOptions.wingetId}"`);
+  }
+  
+  return lines.join('\n');
+}
+
+function generateDevToolsSetup(packageOptions?: PackageOptions): string {
   const devToolSteps: ScriptSection[] = [
     {
       comment: "Source WinGet installation script",
@@ -62,6 +96,11 @@ function generateDevToolsSetup(): string {
       scriptPath: "install-winget-package.ps1"
     },
     {
+      comment: "Install additional WinGet packages",
+      notification: "Installing additional WinGet packages...",
+      scriptPath: "install-winget-packages.ps1"
+    },
+    {
       comment: "Install scoop packages",
       notification: "Scoop package installation in progress...",
       scriptPath: "install-scoop-package.ps1"
@@ -72,6 +111,11 @@ function generateDevToolsSetup(): string {
       scriptPath: "setup-mise.ps1"
     },
     {
+      comment: "Install mise packages",
+      notification: "Installing mise packages...",
+      scriptPath: "install-mise-packages.ps1"
+    },
+    {
       comment: "Install Claude Code CLI",
       notification: "Installing Claude Code CLI...",
       scriptPath: "install-claude-code.ps1"
@@ -79,6 +123,36 @@ function generateDevToolsSetup(): string {
   ];
 
   return devToolSteps.map(step => generateScriptStep(step)).join('\n');
+}
+
+function generatePackageInstallations(packageOptions: PackageOptions): string {
+  const steps: string[] = [];
+  
+  if (packageOptions.mise) {
+    steps.push(generateScriptStep({
+      comment: "Install mise packages",
+      notification: "Installing mise packages...",
+      scriptPath: "install-mise-packages.ps1"
+    }));
+  }
+  
+  if (packageOptions.scoop) {
+    steps.push(generateScriptStep({
+      comment: "Install scoop packages",
+      notification: "Installing scoop packages...",
+      scriptPath: "install-scoop-package.ps1"
+    }));
+  }
+  
+  if (packageOptions.wingetId) {
+    steps.push(generateScriptStep({
+      comment: "Install WinGet packages",
+      notification: "Installing WinGet packages...",
+      scriptPath: "install-winget-packages.ps1"
+    }));
+  }
+  
+  return steps.join('\n');
 }
 
 function generateFirewallSetup(): string {

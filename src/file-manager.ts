@@ -7,6 +7,8 @@ export async function copyScriptFiles(initDir: string): Promise<void> {
     { src: "src/ps1/install-scoop-package.ps1", dest: `${initDir}/install-scoop-package.ps1` },
     { src: "src/ps1/setup-mise.ps1", dest: `${initDir}/setup-mise.ps1` },
     { src: "src/ps1/install-claude-code.ps1", dest: `${initDir}/install-claude-code.ps1` },
+    { src: "src/ps1/install-mise-packages.ps1", dest: `${initDir}/install-mise-packages.ps1` },
+    { src: "src/ps1/install-winget-packages.ps1", dest: `${initDir}/install-winget-packages.ps1` },
     { src: "src/ps1/setup-firewall.ps1", dest: `${initDir}/setup-firewall.ps1` },
   ];
 

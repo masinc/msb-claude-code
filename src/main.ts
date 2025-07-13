@@ -49,8 +49,15 @@ async function main() {
     const workspaceName = workspacePath ? workspacePath.split(/[/\\]/).pop() || undefined : undefined;
     const config = createDefaultConfig(outputDir, workspacePath, memoryGB);
 
+    // Extract package options
+    const packageOptions = {
+      mise: (args.values as any).mise as string || "",
+      scoop: (args.values as any).scoop as string || "",
+      wingetId: (args.values as any)["winget-id"] as string || "",
+    };
+
     const wsbContent = generateWSBContent(config);
-    const initScript = generateInitScript(presetConfig, workspaceName);
+    const initScript = generateInitScript(presetConfig, workspaceName, packageOptions);
 
     // Write main files
     const wsbPath = `${outputDir}/sandbox.wsb`;
@@ -85,6 +92,9 @@ async function main() {
 async function copyRequiredScripts(initDir: string) {
   const requiredScripts = [
     "notify.ps1",
+    "install-mise-packages.ps1",
+    "install-winget-packages.ps1", 
+    "install-scoop-package.ps1",
     "setup-firewall.ps1",
   ];
 
