@@ -46,33 +46,39 @@ try {
     }
 
     Write-Host "🔍 Resolving and adding allowed domains..." -ForegroundColor Green
-    # Allowed domains list (Windows-specific)
+    # Allowed domains list (Windows development environment)
     $allowedDomains = @(        
-        "registry.npmjs.org",
-        "api.anthropic.com", 
-        "sentry.io",
-        "statsig.anthropic.com",
-        "statsig.com",
-        "mise.jdx.dev",
-        "mise-releases.s3.amazonaws.com",
-        "releases.hashicorp.com",
-        "objects.githubusercontent.com",
-        "deno.land",
-        "jsr.io",
-        "github.com",
-        "raw.githubusercontent.com",
-        "codeload.github.com",
-        # VSCode related domains
-        "marketplace.visualstudio.com",
-        "vscode.download.prss.microsoft.com",
-        "update.code.visualstudio.com",
-        "vscode-sync.trafficmanager.net",
-        "vscode-sync-insiders.trafficmanager.net",
-        "az764295.vo.msecnd.net",
-        "ms-vscode.vscode-json.latest.vsix",
-        "login.microsoftonline.com",
-        "vscode.blob.core.windows.net",
-        "vscode-extensions.s3.amazonaws.com"
+        # GitHub services
+        "github.com",                        # GitHub main site
+        "raw.githubusercontent.com",         # Raw file content
+        "codeload.github.com",              # Repository downloads
+        "objects.githubusercontent.com",     # Git LFS objects
+        
+        # Package managers
+        "registry.npmjs.org",               # npm package registry
+        "deno.land",                        # Deno runtime and modules
+        "jsr.io",                           # JavaScript registry
+        
+        # Development tools
+        "mise.jdx.dev",                     # mise tool manager
+        "mise-releases.s3.amazonaws.com",   # mise binary releases
+        
+        # VSCode ecosystem
+        "marketplace.visualstudio.com",              # Extension marketplace
+        "vscode.download.prss.microsoft.com",        # VSCode downloads
+        "update.code.visualstudio.com",              # Auto-updates
+        "vscode-sync.trafficmanager.net",            # Settings sync
+        "vscode-sync-insiders.trafficmanager.net",   # Insiders sync
+        "az764295.vo.msecnd.net",                    # Microsoft CDN
+        "vscode.blob.core.windows.net",              # VSCode assets
+        "vscode-extensions.s3.amazonaws.com",        # Extension storage
+        "login.microsoftonline.com",                 # Microsoft authentication
+        
+        # Claude/Anthropic services
+        "api.anthropic.com",                # Claude API
+        "sentry.io",                        # Error reporting
+        "statsig.anthropic.com",            # Analytics
+        "statsig.com"                       # Feature flags
     )
 
     foreach ($domain in $allowedDomains) {
