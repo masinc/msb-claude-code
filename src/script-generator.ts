@@ -1,5 +1,8 @@
 export function generateInitScript(): string {
-  return `# Source notification script
+  return `# Start transcript for logging
+Start-Transcript -Path "C:\\init.log" -Append
+
+# Source notification script
 . "C:\\init\\notify.ps1"
 
 # Show start notification
@@ -30,5 +33,8 @@ Invoke-Notification -Message "Installing Claude Code CLI..." -Title "Windows San
 . "C:\\init\\install-claude-code.ps1"
 
 # Show completion notification
-Invoke-Notification -Message "Initialization completed successfully!" -Title "Windows Sandbox"`;
+Invoke-Notification -Message "Initialization completed successfully!" -Title "Windows Sandbox"
+
+# Stop transcript
+Stop-Transcript`;
 }
