@@ -17,3 +17,8 @@ Write-Host "Git installation completed."
 Write-Host "Installing Node.js LTS..."
 winget install --id OpenJS.NodeJS.LTS --source winget --accept-package-agreements --accept-source-agreements
 Write-Host "Node.js LTS installation completed."
+
+# Install Visual Studio Code using WinGet
+Write-Host "Installing Visual Studio Code..."
+winget install --id Microsoft.VisualStudioCode --source winget --accept-package-agreements --accept-source-agreements
+Write-Host "Visual Studio Code installation completed."
