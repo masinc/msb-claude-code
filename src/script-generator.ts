@@ -1,7 +1,39 @@
 import { PresetConfig } from "./presets.ts";
 
+interface ScriptSection {
+  comment: string;
+  notification: string;
+  scriptPath: string;
+}
+
 export function generateInitScript(presetConfig: PresetConfig, workspaceName?: string): string {
-  const baseScript = `# Start transcript for logging
+  const sections: string[] = [];
+  
+  // Always start with base setup
+  sections.push(generateBaseSetup());
+  
+  if (presetConfig.includeDevTools) {
+    // Full development environment setup
+    sections.push(generateDevToolsSetup());
+    sections.push(generateFirewallSetup());
+  } else {
+    // Firewall-only setup
+    sections.push(generateFirewallSetup());
+  }
+  
+  // Optional workspace opening
+  if (workspaceName) {
+    sections.push(generateWorkspaceOpening(workspaceName));
+  }
+  
+  // Always end with completion
+  sections.push(generateCompletion());
+  
+  return sections.join('\n');
+}
+
+function generateBaseSetup(): string {
+  return `# Start transcript for logging
 Start-Transcript -Path "C:\\init.log" -Append
 
 # Source notification script
@@ -9,57 +41,73 @@ Start-Transcript -Path "C:\\init.log" -Append
 
 # Show start notification
 Invoke-Notification -Message "Starting initialization..." -Title "Windows Sandbox"`;
+}
 
-  const firewallOnlyScript = `
-# Setup firewall security
-Invoke-Notification -Message "Setting up firewall security..." -Title "Windows Sandbox"
-. "C:\\init\\setup-firewall.ps1"`;
+function generateDevToolsSetup(): string {
+  const devToolSteps: ScriptSection[] = [
+    {
+      comment: "Source WinGet installation script",
+      notification: "Installing WinGet...",
+      scriptPath: "install-winget.ps1"
+    },
+    {
+      comment: "Source Scoop installation script", 
+      notification: "Installing Scoop...",
+      scriptPath: "install-scoop.ps1"
+    },
+    {
+      comment: "Install packages using WinGet",
+      notification: "Winget package installation in progress...",
+      scriptPath: "install-winget-package.ps1"
+    },
+    {
+      comment: "Install scoop packages",
+      notification: "Scoop package installation in progress...",
+      scriptPath: "install-scoop-package.ps1"
+    },
+    {
+      comment: "Setup mise",
+      notification: "Setting up mise...",
+      scriptPath: "setup-mise.ps1"
+    },
+    {
+      comment: "Install Claude Code CLI",
+      notification: "Installing Claude Code CLI...",
+      scriptPath: "install-claude-code.ps1"
+    }
+  ];
 
-  const devToolsScript = `
-# Source WinGet installation script
-Invoke-Notification -Message "Installing WinGet..." -Title "Windows Sandbox"
-. "C:\\init\\install-winget.ps1"
+  return devToolSteps.map(step => generateScriptStep(step)).join('\n');
+}
 
-# Source Scoop installation script
-Invoke-Notification -Message "Installing Scoop..." -Title "Windows Sandbox"
-. "C:\\init\\install-scoop.ps1"
+function generateFirewallSetup(): string {
+  return generateScriptStep({
+    comment: "Setup firewall security",
+    notification: "Setting up firewall security...",
+    scriptPath: "setup-firewall.ps1"
+  });
+}
 
-# Install packages using WinGet
-Invoke-Notification -Message "Winget package installation in progress..." -Title "Windows Sandbox"
-. "C:\\init\\install-winget-package.ps1"
-
-# Install scoop packages
-Invoke-Notification -Message "Scoop package installation in progress..." -Title "Windows Sandbox"
-. "C:\\init\\install-scoop-package.ps1"
-
-# Setup mise
-Invoke-Notification -Message "Setting up mise..." -Title "Windows Sandbox"
-. "C:\\init\\setup-mise.ps1"
-
-# Install Claude Code CLI
-Invoke-Notification -Message "Installing Claude Code CLI..." -Title "Windows Sandbox"
-. "C:\\init\\install-claude-code.ps1"
-
-# Setup firewall security (after development tools installation)
-Invoke-Notification -Message "Setting up firewall security..." -Title "Windows Sandbox"
-. "C:\\init\\setup-firewall.ps1"`;
-
-  const openWorkspaceScript = workspaceName ? `
+function generateWorkspaceOpening(workspaceName: string): string {
+  return `
 # Open project directory in Explorer
 if (Test-Path "C:\\workspace\\${workspaceName}") {
     explorer.exe "C:\\workspace\\${workspaceName}"
-}` : "";
+}`;
+}
 
-  const endScript = `
+function generateCompletion(): string {
+  return `
 # Show completion notification
 Invoke-Notification -Message "Initialization completed successfully!" -Title "Windows Sandbox"
 
 # Stop transcript
 Stop-Transcript`;
+}
 
-  if (presetConfig.includeDevTools) {
-    return baseScript + devToolsScript + openWorkspaceScript + endScript;
-  } else {
-    return baseScript + firewallOnlyScript + openWorkspaceScript + endScript;
-  }
+function generateScriptStep(step: ScriptSection): string {
+  return `
+# ${step.comment}
+Invoke-Notification -Message "${step.notification}" -Title "Windows Sandbox"
+. "C:\\init\\${step.scriptPath}"`;
 }
