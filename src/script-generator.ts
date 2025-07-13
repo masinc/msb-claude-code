@@ -8,8 +8,9 @@ Start-Transcript -Path "C:\\init.log" -Append
 . "C:\\init\\notify.ps1"
 
 # Show start notification
-Invoke-Notification -Message "Starting initialization..." -Title "Windows Sandbox"
+Invoke-Notification -Message "Starting initialization..." -Title "Windows Sandbox"`;
 
+  const firewallOnlyScript = `
 # Setup firewall security
 Invoke-Notification -Message "Setting up firewall security..." -Title "Windows Sandbox"
 . "C:\\init\\setup-firewall.ps1"`;
@@ -37,7 +38,11 @@ Invoke-Notification -Message "Setting up mise..." -Title "Windows Sandbox"
 
 # Install Claude Code CLI
 Invoke-Notification -Message "Installing Claude Code CLI..." -Title "Windows Sandbox"
-. "C:\\init\\install-claude-code.ps1"`;
+. "C:\\init\\install-claude-code.ps1"
+
+# Setup firewall security (after development tools installation)
+Invoke-Notification -Message "Setting up firewall security..." -Title "Windows Sandbox"
+. "C:\\init\\setup-firewall.ps1"`;
 
   const openWorkspaceScript = workspaceName ? `
 # Open project directory in Explorer
@@ -52,5 +57,9 @@ Invoke-Notification -Message "Initialization completed successfully!" -Title "Wi
 # Stop transcript
 Stop-Transcript`;
 
-  return baseScript + (presetConfig.includeDevTools ? devToolsScript : "") + openWorkspaceScript + endScript;
+  if (presetConfig.includeDevTools) {
+    return baseScript + devToolsScript + openWorkspaceScript + endScript;
+  } else {
+    return baseScript + firewallOnlyScript + openWorkspaceScript + endScript;
+  }
 }
