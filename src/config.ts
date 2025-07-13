@@ -13,9 +13,10 @@ export function createDefaultConfig(outputDir: string, workspacePath?: string): 
   // Add workspace folder if specified
   if (workspacePath) {
     const absoluteWorkspacePath = Deno.realPathSync(workspacePath);
+    const workspaceName = workspacePath.split(/[/\\]/).pop() || "workspace";
     mappedFolders.push({
       hostFolder: absoluteWorkspacePath,
-      sandboxFolder: "C:\\workspace",
+      sandboxFolder: `C:\\workspace\\${workspaceName}`,
       readOnly: false,
     });
   }

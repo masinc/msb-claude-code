@@ -28,10 +28,11 @@ async function main() {
     await Deno.mkdir(initDir, { recursive: true });
 
     const workspacePath = args.values.workspace as string | undefined;
+    const workspaceName = workspacePath ? workspacePath.split(/[/\\]/).pop() || undefined : undefined;
     const config = createDefaultConfig(outputDir, workspacePath);
 
     const wsbContent = generateWSBContent(config);
-    const initScript = generateInitScript(presetConfig);
+    const initScript = generateInitScript(presetConfig, workspaceName);
 
     // Write main files
     const wsbPath = `${outputDir}/sandbox.wsb`;

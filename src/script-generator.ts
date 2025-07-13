@@ -1,6 +1,6 @@
 import { PresetConfig } from "./presets.ts";
 
-export function generateInitScript(presetConfig: PresetConfig): string {
+export function generateInitScript(presetConfig: PresetConfig, workspaceName?: string): string {
   const baseScript = `# Start transcript for logging
 Start-Transcript -Path "C:\\init.log" -Append
 
@@ -39,6 +39,12 @@ Invoke-Notification -Message "Setting up mise..." -Title "Windows Sandbox"
 Invoke-Notification -Message "Installing Claude Code CLI..." -Title "Windows Sandbox"
 . "C:\\init\\install-claude-code.ps1"`;
 
+  const openWorkspaceScript = workspaceName ? `
+# Open project directory in Explorer
+if (Test-Path "C:\\workspace\\${workspaceName}") {
+    explorer.exe "C:\\workspace\\${workspaceName}"
+}` : "";
+
   const endScript = `
 # Show completion notification
 Invoke-Notification -Message "Initialization completed successfully!" -Title "Windows Sandbox"
@@ -46,5 +52,5 @@ Invoke-Notification -Message "Initialization completed successfully!" -Title "Wi
 # Stop transcript
 Stop-Transcript`;
 
-  return baseScript + (presetConfig.includeDevTools ? devToolsScript : "") + endScript;
+  return baseScript + (presetConfig.includeDevTools ? devToolsScript : "") + openWorkspaceScript + endScript;
 }
