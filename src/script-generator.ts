@@ -12,17 +12,24 @@ interface PackageOptions {
   wingetId?: string;
 }
 
-export function generateInitScript(presetConfig: PresetConfig, workspaceName?: string, packageOptions?: PackageOptions): string {
+export function generateInitScript(
+  presetConfig: PresetConfig,
+  workspaceName?: string,
+  packageOptions?: PackageOptions,
+): string {
   const sections: string[] = [];
-  
+
   // Always start with base setup and progress system
   sections.push(generateBaseSetup());
-  
+
   // Set up package variables if any packages are specified
-  if (packageOptions && (packageOptions.mise || packageOptions.scoop || packageOptions.wingetId)) {
+  if (
+    packageOptions &&
+    (packageOptions.mise || packageOptions.scoop || packageOptions.wingetId)
+  ) {
     sections.push(generatePackageVariables(packageOptions));
   }
-  
+
   if (presetConfig.includeDevTools) {
     // Full development environment setup
     sections.push(generateDevToolsSetup(packageOptions));
@@ -35,16 +42,16 @@ export function generateInitScript(presetConfig: PresetConfig, workspaceName?: s
     // Firewall-only setup
     sections.push(generateFirewallSetup());
   }
-  
+
   // Optional workspace opening
   if (workspaceName) {
     sections.push(generateWorkspaceOpening(workspaceName));
   }
-  
+
   // Always end with completion
   sections.push(generateCompletion());
-  
-  return sections.join('\n');
+
+  return sections.join("\n");
 }
 
 function generateBaseSetup(): string {
@@ -62,20 +69,20 @@ Invoke-Notification -Message "Starting initialization..." -Title "Windows Sandbo
 function generatePackageVariables(packageOptions: PackageOptions): string {
   const lines: string[] = [];
   lines.push("# Set package variables");
-  
+
   if (packageOptions.mise) {
     lines.push(`$env:MISE_PACKAGES = "${packageOptions.mise}"`);
   }
-  
+
   if (packageOptions.scoop) {
     lines.push(`$env:SCOOP_PACKAGES = "${packageOptions.scoop}"`);
   }
-  
+
   if (packageOptions.wingetId) {
     lines.push(`$env:WINGET_PACKAGE_IDS = "${packageOptions.wingetId}"`);
   }
-  
-  return lines.join('\n');
+
+  return lines.join("\n");
 }
 
 function generateDevToolsSetup(_packageOptions?: PackageOptions): string {
@@ -83,83 +90,83 @@ function generateDevToolsSetup(_packageOptions?: PackageOptions): string {
     {
       comment: "Source WinGet installation script",
       notification: "Installing WinGet...",
-      scriptPath: "install-winget.ps1"
+      scriptPath: "install-winget.ps1",
     },
     {
-      comment: "Source Scoop installation script", 
+      comment: "Source Scoop installation script",
       notification: "Installing Scoop...",
-      scriptPath: "install-scoop.ps1"
+      scriptPath: "install-scoop.ps1",
     },
     {
       comment: "Install packages using WinGet",
       notification: "Winget package installation in progress...",
-      scriptPath: "install-winget-defaults.ps1"
+      scriptPath: "install-winget-defaults.ps1",
     },
     {
       comment: "Install additional WinGet packages",
       notification: "Installing additional WinGet packages...",
-      scriptPath: "install-winget-custom.ps1"
+      scriptPath: "install-winget-custom.ps1",
     },
     {
       comment: "Install scoop packages",
       notification: "Scoop package installation in progress...",
-      scriptPath: "install-scoop-package.ps1"
+      scriptPath: "install-scoop-package.ps1",
     },
     {
       comment: "Setup mise",
       notification: "Setting up mise...",
-      scriptPath: "setup-mise.ps1"
+      scriptPath: "setup-mise.ps1",
     },
     {
       comment: "Install mise packages",
       notification: "Installing mise packages...",
-      scriptPath: "install-mise-packages.ps1"
+      scriptPath: "install-mise-packages.ps1",
     },
     {
       comment: "Install Claude Code CLI",
       notification: "Installing Claude Code CLI...",
-      scriptPath: "install-claude-code.ps1"
-    }
+      scriptPath: "install-claude-code.ps1",
+    },
   ];
 
-  return devToolSteps.map(step => generateScriptStep(step)).join('\n');
+  return devToolSteps.map((step) => generateScriptStep(step)).join("\n");
 }
 
 function generatePackageInstallations(packageOptions: PackageOptions): string {
   const steps: string[] = [];
-  
+
   if (packageOptions.mise) {
     steps.push(generateScriptStep({
       comment: "Install mise packages",
       notification: "Installing mise packages...",
-      scriptPath: "install-mise-packages.ps1"
+      scriptPath: "install-mise-packages.ps1",
     }));
   }
-  
+
   if (packageOptions.scoop) {
     steps.push(generateScriptStep({
       comment: "Install scoop packages",
       notification: "Installing scoop packages...",
-      scriptPath: "install-scoop-package.ps1"
+      scriptPath: "install-scoop-package.ps1",
     }));
   }
-  
+
   if (packageOptions.wingetId) {
     steps.push(generateScriptStep({
       comment: "Install WinGet packages",
       notification: "Installing WinGet packages...",
-      scriptPath: "install-winget-custom.ps1"
+      scriptPath: "install-winget-custom.ps1",
     }));
   }
-  
-  return steps.join('\n');
+
+  return steps.join("\n");
 }
 
 function generateFirewallSetup(): string {
   return generateScriptStep({
     comment: "Setup firewall security",
     notification: "Setting up firewall security...",
-    scriptPath: "setup-firewall.ps1"
+    scriptPath: "setup-firewall.ps1",
   });
 }
 

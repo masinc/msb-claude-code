@@ -1,16 +1,40 @@
 export async function copyScriptFiles(initDir: string): Promise<void> {
   const scripts = [
     { src: "src/ps1/notify.ps1", dest: `${initDir}/notify.ps1` },
-    { src: "src/ps1/install-winget.ps1", dest: `${initDir}/install-winget.ps1` },
+    {
+      src: "src/ps1/install-winget.ps1",
+      dest: `${initDir}/install-winget.ps1`,
+    },
     { src: "src/ps1/install-scoop.ps1", dest: `${initDir}/install-scoop.ps1` },
-    { src: "src/ps1/install-winget-defaults.ps1", dest: `${initDir}/install-winget-defaults.ps1` },
-    { src: "src/ps1/install-scoop-package.ps1", dest: `${initDir}/install-scoop-package.ps1` },
+    {
+      src: "src/ps1/install-winget-defaults.ps1",
+      dest: `${initDir}/install-winget-defaults.ps1`,
+    },
+    {
+      src: "src/ps1/install-scoop-package.ps1",
+      dest: `${initDir}/install-scoop-package.ps1`,
+    },
     { src: "src/ps1/setup-mise.ps1", dest: `${initDir}/setup-mise.ps1` },
-    { src: "src/ps1/install-claude-code.ps1", dest: `${initDir}/install-claude-code.ps1` },
-    { src: "src/ps1/install-mise-packages.ps1", dest: `${initDir}/install-mise-packages.ps1` },
-    { src: "src/ps1/install-winget-custom.ps1", dest: `${initDir}/install-winget-custom.ps1` },
-    { src: "src/ps1/refresh-environment.ps1", dest: `${initDir}/refresh-environment.ps1` },
-    { src: "src/ps1/setup-firewall.ps1", dest: `${initDir}/setup-firewall.ps1` },
+    {
+      src: "src/ps1/install-claude-code.ps1",
+      dest: `${initDir}/install-claude-code.ps1`,
+    },
+    {
+      src: "src/ps1/install-mise-packages.ps1",
+      dest: `${initDir}/install-mise-packages.ps1`,
+    },
+    {
+      src: "src/ps1/install-winget-custom.ps1",
+      dest: `${initDir}/install-winget-custom.ps1`,
+    },
+    {
+      src: "src/ps1/refresh-environment.ps1",
+      dest: `${initDir}/refresh-environment.ps1`,
+    },
+    {
+      src: "src/ps1/setup-firewall.ps1",
+      dest: `${initDir}/setup-firewall.ps1`,
+    },
   ];
 
   for (const script of scripts) {
@@ -20,8 +44,9 @@ export async function copyScriptFiles(initDir: string): Promise<void> {
   }
 }
 
-
-export async function openOutputFolderOnWindows(outputDir: string): Promise<void> {
+export async function openOutputFolderOnWindows(
+  outputDir: string,
+): Promise<void> {
   if (Deno.build.os === "windows") {
     try {
       const command = new Deno.Command("explorer", {

@@ -20,7 +20,9 @@ export const PRESETS: Record<string, PresetConfig> = {
 export function validatePreset(preset: string): PresetConfig {
   if (!(preset in PRESETS)) {
     throw new Error(
-      `Invalid preset: ${preset}. Available presets: ${Object.keys(PRESETS).join(", ")}`,
+      `Invalid preset: ${preset}. Available presets: ${
+        Object.keys(PRESETS).join(", ")
+      }`,
     );
   }
   return PRESETS[preset];

@@ -1,6 +1,8 @@
 import type { WSBConfig } from "./types.ts";
 
-function generateMappedFolderXml(folder: { hostFolder: string; sandboxFolder: string; readOnly: boolean }): string {
+function generateMappedFolderXml(
+  folder: { hostFolder: string; sandboxFolder: string; readOnly: boolean },
+): string {
   return `    <MappedFolder>
       <HostFolder>${folder.hostFolder}</HostFolder>
       <SandboxFolder>${folder.sandboxFolder}</SandboxFolder>
@@ -8,7 +10,9 @@ function generateMappedFolderXml(folder: { hostFolder: string; sandboxFolder: st
     </MappedFolder>`;
 }
 
-function generateMappedFoldersSection(mappedFolders?: WSBConfig["mappedFolders"]): string {
+function generateMappedFoldersSection(
+  mappedFolders?: WSBConfig["mappedFolders"],
+): string {
   if (!mappedFolders || mappedFolders.length === 0) {
     return "";
   }
@@ -19,7 +23,9 @@ ${foldersXml}
   </MappedFolders>`;
 }
 
-function generateLogonCommandSection(logonCommand?: WSBConfig["logonCommand"]): string {
+function generateLogonCommandSection(
+  logonCommand?: WSBConfig["logonCommand"],
+): string {
   if (!logonCommand) {
     return "";
   }
@@ -30,7 +36,9 @@ function generateLogonCommandSection(logonCommand?: WSBConfig["logonCommand"]): 
 }
 
 export function generateWSBContent(config: WSBConfig): string {
-  const mappedFoldersSection = generateMappedFoldersSection(config.mappedFolders);
+  const mappedFoldersSection = generateMappedFoldersSection(
+    config.mappedFolders,
+  );
   const logonCommandSection = generateLogonCommandSection(config.logonCommand);
 
   return `<Configuration>

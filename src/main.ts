@@ -25,29 +25,35 @@ async function main() {
       "winget-id"?: string;
       help?: boolean;
     }
-    
+
     const extendedArgs = args.values as ExtendedArgs;
-    
+
     // Validate preset
     const presetName = extendedArgs.preset || "default";
     const presetConfig = validatePreset(presetName);
-    
-    console.log(`Using preset: ${presetConfig.name} - ${presetConfig.description}`);
+
+    console.log(
+      `Using preset: ${presetConfig.name} - ${presetConfig.description}`,
+    );
 
     const outputDir = extendedArgs.output || "dist";
     const memoryGB = parseInt(extendedArgs.memory || "8");
     const initDir = `${outputDir}/init`;
-    
+
     // Validate memory value
     if (isNaN(memoryGB) || memoryGB < 1 || memoryGB > 64) {
-      throw new Error(`Invalid memory value: ${extendedArgs.memory}. Must be between 1 and 64 GB.`);
+      throw new Error(
+        `Invalid memory value: ${extendedArgs.memory}. Must be between 1 and 64 GB.`,
+      );
     }
 
     // Check if output directory already exists
     try {
       const stat = await Deno.stat(outputDir);
       if (stat.isDirectory) {
-        throw new Error(`Output directory '${outputDir}' already exists. Please choose a different output path or remove the existing directory.`);
+        throw new Error(
+          `Output directory '${outputDir}' already exists. Please choose a different output path or remove the existing directory.`,
+        );
       }
     } catch (error) {
       if (!(error instanceof Deno.errors.NotFound)) {
@@ -60,7 +66,9 @@ async function main() {
     await Deno.mkdir(initDir, { recursive: true });
 
     const workspacePath = extendedArgs.workspace;
-    const workspaceName = workspacePath ? workspacePath.split(/[/\\]/).pop() || undefined : undefined;
+    const workspaceName = workspacePath
+      ? workspacePath.split(/[/\\]/).pop() || undefined
+      : undefined;
     const config = createDefaultConfig(outputDir, workspacePath, memoryGB);
 
     // Extract package options
@@ -71,15 +79,19 @@ async function main() {
     };
 
     const wsbContent = generateWSBContent(config);
-    const initScript = generateInitScript(presetConfig, workspaceName, packageOptions);
+    const initScript = generateInitScript(
+      presetConfig,
+      workspaceName,
+      packageOptions,
+    );
 
     // Write main files
     const wsbPath = `${outputDir}/sandbox.wsb`;
     const initPath = `${initDir}/init.ps1`;
-    
+
     await Deno.writeTextFile(wsbPath, wsbContent);
     console.log(`Created: ${wsbPath}`);
-    
+
     await Deno.writeTextFile(initPath, initScript);
     console.log(`Created: ${initPath}`);
 
@@ -107,18 +119,18 @@ async function copyRequiredScripts(initDir: string) {
   const requiredScripts = [
     "notify.ps1",
     "install-mise-packages.ps1",
-    "install-winget-custom.ps1", 
+    "install-winget-custom.ps1",
     "install-scoop-package.ps1",
     "refresh-environment.ps1",
     "setup-firewall.ps1",
   ];
 
   console.log(`Copying required scripts for firewall-only preset...`);
-  
+
   for (const script of requiredScripts) {
     const srcPath = `src/ps1/${script}`;
     const destPath = `${initDir}/${script}`;
-    
+
     try {
       const content = await Deno.readTextFile(srcPath);
       await Deno.writeTextFile(destPath, content);

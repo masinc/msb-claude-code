@@ -28,7 +28,7 @@ export function parseCliArgs() {
         default: "",
       },
       scoop: {
-        type: "string", 
+        type: "string",
         default: "",
       },
       "winget-id": {

@@ -1,6 +1,10 @@
 import type { WSBConfig } from "./types.ts";
 
-export function createDefaultConfig(outputDir: string, workspacePath?: string, memoryGB?: number): WSBConfig {
+export function createDefaultConfig(
+  outputDir: string,
+  workspacePath?: string,
+  memoryGB?: number,
+): WSBConfig {
   const absoluteInitDir = Deno.realPathSync(`${outputDir}/init`);
   const mappedFolders = [
     {
