@@ -1,6 +1,6 @@
 import type { WSBConfig } from "./types.ts";
 
-export function createDefaultConfig(outputDir: string, workspacePath?: string): WSBConfig {
+export function createDefaultConfig(outputDir: string, workspacePath?: string, memoryGB?: number): WSBConfig {
   const absoluteInitDir = Deno.realPathSync(`${outputDir}/init`);
   const mappedFolders = [
     {
@@ -34,6 +34,6 @@ export function createDefaultConfig(outputDir: string, workspacePath?: string): 
     protectedClient: "Enable",
     printScreen: "Enable",
     clipboardRedirection: "Enable",
-    memoryInMB: "8192",
+    memoryInMB: String((memoryGB || 8) * 1024),
   };
 }

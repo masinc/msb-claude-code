@@ -21,7 +21,13 @@ async function main() {
     console.log(`Using preset: ${presetConfig.name} - ${presetConfig.description}`);
 
     const outputDir = (args.values as { output?: string }).output || "dist";
+    const memoryGB = parseInt((args.values as { memory?: string }).memory || "8");
     const initDir = `${outputDir}/init`;
+    
+    // Validate memory value
+    if (isNaN(memoryGB) || memoryGB < 1 || memoryGB > 64) {
+      throw new Error(`Invalid memory value: ${(args.values as { memory?: string }).memory}. Must be between 1 and 64 GB.`);
+    }
 
     // Check if output directory already exists
     try {
@@ -41,7 +47,7 @@ async function main() {
 
     const workspacePath = args.values.workspace as string | undefined;
     const workspaceName = workspacePath ? workspacePath.split(/[/\\]/).pop() || undefined : undefined;
-    const config = createDefaultConfig(outputDir, workspacePath);
+    const config = createDefaultConfig(outputDir, workspacePath, memoryGB);
 
     const wsbContent = generateWSBContent(config);
     const initScript = generateInitScript(presetConfig, workspaceName);
