@@ -78,7 +78,7 @@ function generatePackageVariables(packageOptions: PackageOptions): string {
   return lines.join('\n');
 }
 
-function generateDevToolsSetup(packageOptions?: PackageOptions): string {
+function generateDevToolsSetup(_packageOptions?: PackageOptions): string {
   const devToolSteps: ScriptSection[] = [
     {
       comment: "Source WinGet installation script",

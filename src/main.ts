@@ -14,19 +14,33 @@ async function main() {
       return;
     }
 
+    // Define extended args interface
+    interface ExtendedArgs {
+      workspace?: string;
+      preset?: string;
+      output?: string;
+      memory?: string;
+      mise?: string;
+      scoop?: string;
+      "winget-id"?: string;
+      help?: boolean;
+    }
+    
+    const extendedArgs = args.values as ExtendedArgs;
+    
     // Validate preset
-    const presetName = (args.values as { preset?: string }).preset || "default";
+    const presetName = extendedArgs.preset || "default";
     const presetConfig = validatePreset(presetName);
     
     console.log(`Using preset: ${presetConfig.name} - ${presetConfig.description}`);
 
-    const outputDir = (args.values as { output?: string }).output || "dist";
-    const memoryGB = parseInt((args.values as { memory?: string }).memory || "8");
+    const outputDir = extendedArgs.output || "dist";
+    const memoryGB = parseInt(extendedArgs.memory || "8");
     const initDir = `${outputDir}/init`;
     
     // Validate memory value
     if (isNaN(memoryGB) || memoryGB < 1 || memoryGB > 64) {
-      throw new Error(`Invalid memory value: ${(args.values as { memory?: string }).memory}. Must be between 1 and 64 GB.`);
+      throw new Error(`Invalid memory value: ${extendedArgs.memory}. Must be between 1 and 64 GB.`);
     }
 
     // Check if output directory already exists
@@ -45,15 +59,15 @@ async function main() {
     await Deno.mkdir(outputDir, { recursive: true });
     await Deno.mkdir(initDir, { recursive: true });
 
-    const workspacePath = args.values.workspace as string | undefined;
+    const workspacePath = extendedArgs.workspace;
     const workspaceName = workspacePath ? workspacePath.split(/[/\\]/).pop() || undefined : undefined;
     const config = createDefaultConfig(outputDir, workspacePath, memoryGB);
 
     // Extract package options
     const packageOptions = {
-      mise: (args.values as any).mise as string || "",
-      scoop: (args.values as any).scoop as string || "",
-      wingetId: (args.values as any)["winget-id"] as string || "",
+      mise: extendedArgs.mise || "",
+      scoop: extendedArgs.scoop || "",
+      wingetId: extendedArgs["winget-id"] || "",
     };
 
     const wsbContent = generateWSBContent(config);
