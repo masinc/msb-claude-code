@@ -92,6 +92,9 @@ Invoke-Notification -Message "Starting initialization..." -Title "Windows Sandbo
 # Source WinGet installation script
 . "C:\\init\\install-winget.ps1"
 
+# Source Scoop installation script
+. "C:\\init\\install-scoop.ps1"
+
 # Install Windows Terminal
 winget install --id Microsoft.WindowsTerminal --source winget --accept-package-agreements --accept-source-agreements
 
@@ -163,6 +166,7 @@ Output:
     const initPath = `${initDir}/init.ps1`;
     const notifyPath = `${initDir}/notify.ps1`;
     const installWingetPath = `${initDir}/install-winget.ps1`;
+    const installScoopPath = `${initDir}/install-scoop.ps1`;
 
     await Deno.writeTextFile(wsbPath, wsbContent);
     await Deno.writeTextFile(initPath, initScript);
@@ -176,11 +180,17 @@ Output:
     );
     await Deno.writeTextFile(installWingetPath, installWingetScript);
 
+    const installScoopScript = await Deno.readTextFile(
+      "src/ps1/install-scoop.ps1",
+    );
+    await Deno.writeTextFile(installScoopPath, installScoopScript);
+
     console.log(`Files created:`);
     console.log(`  ${wsbPath}`);
     console.log(`  ${initPath}`);
     console.log(`  ${notifyPath}`);
     console.log(`  ${installWingetPath}`);
+    console.log(`  ${installScoopPath}`);
   } catch (error) {
     console.error(
       "Error:",
