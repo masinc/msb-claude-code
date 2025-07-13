@@ -154,5 +154,5 @@ function Invoke-ProgressStep {
     }
 }
 
-# Export functions for use in other scripts
-Export-ModuleMember -Function Initialize-Progress, Update-ProgressStep, Add-ProgressLog, Set-ProgressError, Complete-Progress, Start-ProgressGUI, Stop-ProgressGUI, Invoke-ProgressStep
+# Functions are automatically available when dot-sourced
+# No Export-ModuleMember needed for dot-sourced scripts
