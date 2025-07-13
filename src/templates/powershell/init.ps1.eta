@@ -1,0 +1,93 @@
+# Start transcript for logging
+Start-Transcript -Path "C:\init.log" -Append
+
+# Source notification script
+. "C:\init\notify.ps1"
+
+
+# Show start notification
+Invoke-Notification -Message "Starting initialization..." -Title "Windows Sandbox"
+<% if (it.packageOptions && (it.packageOptions.mise || it.packageOptions.scoop || it.packageOptions.wingetId)) { %>
+
+# Set package variables
+<% if (it.packageOptions.mise) { %>
+$env:MISE_PACKAGES = "<%= it.packageOptions.mise %>"
+<% } %>
+<% if (it.packageOptions.scoop) { %>
+$env:SCOOP_PACKAGES = "<%= it.packageOptions.scoop %>"
+<% } %>
+<% if (it.packageOptions.wingetId) { %>
+$env:WINGET_PACKAGE_IDS = "<%= it.packageOptions.wingetId %>"
+<% } %>
+<% } %>
+<% if (it.presetConfig.includeDevTools) { %>
+
+# Source WinGet installation script
+Invoke-Notification -Message "Installing WinGet..." -Title "Windows Sandbox"
+. "C:\init\install-winget.ps1"
+
+# Source Scoop installation script
+Invoke-Notification -Message "Installing Scoop..." -Title "Windows Sandbox"
+. "C:\init\install-scoop.ps1"
+
+# Install packages using WinGet
+Invoke-Notification -Message "Winget package installation in progress..." -Title "Windows Sandbox"
+. "C:\init\install-winget-defaults.ps1"
+
+# Install additional WinGet packages
+Invoke-Notification -Message "Installing additional WinGet packages..." -Title "Windows Sandbox"
+. "C:\init\install-winget-custom.ps1"
+
+# Install scoop packages
+Invoke-Notification -Message "Scoop package installation in progress..." -Title "Windows Sandbox"
+. "C:\init\install-scoop-package.ps1"
+
+# Setup mise
+Invoke-Notification -Message "Setting up mise..." -Title "Windows Sandbox"
+. "C:\init\setup-mise.ps1"
+
+# Install mise packages
+Invoke-Notification -Message "Installing mise packages..." -Title "Windows Sandbox"
+. "C:\init\install-mise-packages.ps1"
+
+# Install Claude Code CLI
+Invoke-Notification -Message "Installing Claude Code CLI..." -Title "Windows Sandbox"
+. "C:\init\install-claude-code.ps1"
+<% } else { %>
+<% if (it.packageOptions && it.packageOptions.mise) { %>
+
+# Install mise packages
+Invoke-Notification -Message "Installing mise packages..." -Title "Windows Sandbox"
+. "C:\init\install-mise-packages.ps1"
+<% } %>
+<% if (it.packageOptions && it.packageOptions.scoop) { %>
+
+# Install scoop packages
+Invoke-Notification -Message "Installing scoop packages..." -Title "Windows Sandbox"
+. "C:\init\install-scoop-package.ps1"
+<% } %>
+<% if (it.packageOptions && it.packageOptions.wingetId) { %>
+
+# Install WinGet packages
+Invoke-Notification -Message "Installing WinGet packages..." -Title "Windows Sandbox"
+. "C:\init\install-winget-custom.ps1"
+<% } %>
+<% } %>
+
+# Setup firewall security
+Invoke-Notification -Message "Setting up firewall security..." -Title "Windows Sandbox"
+. "C:\init\setup-firewall.ps1"
+<% if (it.workspaceName) { %>
+
+# Open project directory in Explorer
+if (Test-Path "C:\workspace\<%= it.workspaceName %>") {
+    explorer.exe "C:\workspace\<%= it.workspaceName %>"
+}
+<% } %>
+
+
+# Show completion notification
+Invoke-Notification -Message "Initialization completed successfully!" -Title "Windows Sandbox"
+
+# Stop transcript
+Stop-Transcript

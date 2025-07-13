@@ -1,0 +1,26 @@
+<Configuration>
+  <vGPU><%= it.vGPU %></vGPU>
+  <Networking><%= it.networking %></Networking>
+<% if (it.mappedFolders && it.mappedFolders.length > 0) { %>
+  <MappedFolders>
+<% it.mappedFolders.forEach(folder => { %>
+    <MappedFolder>
+      <HostFolder><%= it.escapeXml(folder.hostFolder) %></HostFolder>
+      <SandboxFolder><%= it.escapeXml(folder.sandboxFolder) %></SandboxFolder>
+      <ReadOnly><%= folder.readOnly %></ReadOnly>
+    </MappedFolder>
+<% }) %>
+  </MappedFolders>
+<% } %>
+<% if (it.logonCommand) { %>
+  <LogonCommand>
+    <Command><%= it.escapeXml(it.logonCommand.command) %></Command>
+  </LogonCommand>
+<% } %>
+  <AudioInput><%= it.audioInput %></AudioInput>
+  <VideoInput><%= it.videoInput %></VideoInput>
+  <ProtectedClient><%= it.protectedClient %></ProtectedClient>
+  <PrintScreen><%= it.printScreen %></PrintScreen>
+  <ClipboardRedirection><%= it.clipboardRedirection %></ClipboardRedirection>
+  <MemoryInMB><%= it.memoryInMB %></MemoryInMB>
+</Configuration>
