@@ -54,12 +54,13 @@ ${logonCommandXml}
 }
 
 function createDefaultConfig(outputDir: string): WSBConfig {
+  const absoluteOutputDir = Deno.realPathSync(outputDir);
   return {
     vGPU: "Enable",
     networking: "Enable",
     mappedFolders: [
       {
-        hostFolder: outputDir,
+        hostFolder: absoluteOutputDir,
         sandboxFolder: "C:\\workspace",
         readOnly: true
       }
