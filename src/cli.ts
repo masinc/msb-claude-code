@@ -35,6 +35,10 @@ export function parseCliArgs() {
         type: "string",
         default: "",
       },
+      "protected-client": {
+        type: "boolean",
+        default: false,
+      },
       help: {
         type: "boolean",
         short: "h",
@@ -56,6 +60,7 @@ Options:
       --mise <packages>     Install packages via mise (e.g., go@1,python@3)
       --scoop <packages>    Install packages via scoop (e.g., yq,jq)
       --winget-id <ids>     Install packages via WinGet ID (e.g., Microsoft.DotNet.SDK.8)
+      --protected-client    Enable app protection (default: false, Windows Terminal may not work)
   -h, --help               Show this help message
 
 Presets:
@@ -68,6 +73,7 @@ Examples:
   deno run src/main.ts --workspace C:\\path\\to\\project
   deno run src/main.ts --mise go@1,python@3 --scoop yq,jq
   deno run src/main.ts --winget-id Microsoft.DotNet.SDK.8,Microsoft.VisualStudio.2022.BuildTools
+  deno run src/main.ts --protected-client  # Enable app protection (Windows Terminal restricted)
   deno run src/main.ts --preset default --workspace C:\\path\\to\\project --memory 4
 
 Output:

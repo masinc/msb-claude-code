@@ -23,6 +23,7 @@ async function main() {
       mise?: string;
       scoop?: string;
       "winget-id"?: string;
+      "protected-client"?: boolean;
       help?: boolean;
     }
 
@@ -69,7 +70,12 @@ async function main() {
     const workspaceName = workspacePath
       ? workspacePath.split(/[/\\]/).pop() || undefined
       : undefined;
-    const config = createDefaultConfig(outputDir, workspacePath, memoryGB);
+    const config = createDefaultConfig(
+      outputDir,
+      workspacePath,
+      memoryGB,
+      extendedArgs["protected-client"] || false,
+    );
 
     // Extract package options
     const packageOptions = {

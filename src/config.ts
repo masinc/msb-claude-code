@@ -4,6 +4,7 @@ export function createDefaultConfig(
   outputDir: string,
   workspacePath?: string,
   memoryGB?: number,
+  protectedClient?: boolean,
 ): WSBConfig {
   const absoluteInitDir = Deno.realPathSync(`${outputDir}/init`);
   const mappedFolders = [
@@ -35,7 +36,7 @@ export function createDefaultConfig(
     },
     audioInput: "Disable",
     videoInput: "Disable",
-    protectedClient: "Enable",
+    protectedClient: protectedClient ? "Enable" : "Disable",
     printScreen: "Enable",
     clipboardRedirection: "Enable",
     memoryInMB: String((memoryGB || 8) * 1024),
