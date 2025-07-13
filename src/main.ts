@@ -54,19 +54,19 @@ ${logonCommandXml}
 }
 
 function createDefaultConfig(outputDir: string): WSBConfig {
-  const absoluteOutputDir = Deno.realPathSync(outputDir);
+  const absoluteInitDir = Deno.realPathSync(`${outputDir}/init`);
   return {
     vGPU: "Enable",
     networking: "Enable",
     mappedFolders: [
       {
-        hostFolder: absoluteOutputDir,
-        sandboxFolder: "C:\\workspace",
+        hostFolder: absoluteInitDir,
+        sandboxFolder: "C:\\init",
         readOnly: true
       }
     ],
     logonCommand: {
-      command: `powershell.exe -ExecutionPolicy Bypass -File "C:\\workspace\\init\\init.ps1"`
+      command: `powershell.exe -ExecutionPolicy Bypass -File "C:\\init\\init.ps1"`
     },
     audioInput: "Disable",
     videoInput: "Disable",
