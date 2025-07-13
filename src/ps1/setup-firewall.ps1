@@ -61,7 +61,18 @@ try {
         "jsr.io",
         "github.com",
         "raw.githubusercontent.com",
-        "codeload.github.com"
+        "codeload.github.com",
+        # VSCode related domains
+        "marketplace.visualstudio.com",
+        "vscode.download.prss.microsoft.com",
+        "update.code.visualstudio.com",
+        "vscode-sync.trafficmanager.net",
+        "vscode-sync-insiders.trafficmanager.net",
+        "az764295.vo.msecnd.net",
+        "ms-vscode.vscode-json.latest.vsix",
+        "login.microsoftonline.com",
+        "vscode.blob.core.windows.net",
+        "vscode-extensions.s3.amazonaws.com"
     )
 
     foreach ($domain in $allowedDomains) {
