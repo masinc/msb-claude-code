@@ -95,6 +95,9 @@ Invoke-Notification -Message "Starting initialization..." -Title "Windows Sandbo
 # Install Windows Terminal
 winget install --id Microsoft.WindowsTerminal --source winget --accept-package-agreements --accept-source-agreements
 
+# Install PowerShell
+winget install --id Microsoft.PowerShell --source winget --accept-package-agreements --accept-source-agreements
+
 # Show completion notification
 Invoke-Notification -Message "Initialization completed successfully!" -Title "Windows Sandbox"`;
 }
