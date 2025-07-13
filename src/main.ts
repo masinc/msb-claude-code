@@ -22,27 +22,31 @@ interface WSBConfig {
 function generateWSBContent(config: WSBConfig): string {
   const mappedFoldersXml = config.mappedFolders
     ? config.mappedFolders
-        .map(
-          (folder) =>
-            `    <MappedFolder>
+      .map(
+        (folder) =>
+          `    <MappedFolder>
       <HostFolder>${folder.hostFolder}</HostFolder>
       <SandboxFolder>${folder.sandboxFolder}</SandboxFolder>
       <ReadOnly>${folder.readOnly}</ReadOnly>
-    </MappedFolder>`
-        )
-        .join('\n')
-    : '';
+    </MappedFolder>`,
+      )
+      .join("\n")
+    : "";
 
   const logonCommandXml = config.logonCommand
     ? `  <LogonCommand>
     <Command>${config.logonCommand.command}</Command>
   </LogonCommand>`
-    : '';
+    : "";
 
   return `<Configuration>
   <vGPU>${config.vGPU}</vGPU>
   <Networking>${config.networking}</Networking>
-${mappedFoldersXml ? `  <MappedFolders>\n${mappedFoldersXml}\n  </MappedFolders>` : ''}
+${
+    mappedFoldersXml
+      ? `  <MappedFolders>\n${mappedFoldersXml}\n  </MappedFolders>`
+      : ""
+  }
 ${logonCommandXml}
   <AudioInput>${config.audioInput}</AudioInput>
   <VideoInput>${config.videoInput}</VideoInput>
@@ -62,18 +66,19 @@ function createDefaultConfig(outputDir: string): WSBConfig {
       {
         hostFolder: absoluteInitDir,
         sandboxFolder: "C:\\init",
-        readOnly: true
-      }
+        readOnly: true,
+      },
     ],
     logonCommand: {
-      command: `powershell.exe -ExecutionPolicy Bypass -File "C:\\init\\init.ps1"`
+      command:
+        `powershell.exe -ExecutionPolicy Bypass -File "C:\\init\\init.ps1"`,
     },
     audioInput: "Disable",
     videoInput: "Disable",
     protectedClient: "Enable",
     printScreen: "Enable",
     clipboardRedirection: "Enable",
-    memoryInMB: "4096"
+    memoryInMB: "4096",
   };
 }
 
@@ -88,7 +93,7 @@ Invoke-Notification -Message "Starting initialization..." -Title "Windows Sandbo
 . "C:\\init\\install-winget.ps1"
 
 # Install Windows Terminal
-winget install --id Microsoft.WindowsTerminal --accept-package-agreements --accept-source-agreements
+winget install --id Microsoft.WindowsTerminal --source winget --accept-package-agreements --accept-source-agreements
 
 # Show completion notification
 Invoke-Notification -Message "Initialization completed successfully!" -Title "Windows Sandbox"`;
@@ -102,15 +107,15 @@ async function main() {
         template: {
           type: "string",
           short: "t",
-          default: "default"
+          default: "default",
         },
         help: {
           type: "boolean",
           short: "h",
-          default: false
-        }
+          default: false,
+        },
       },
-      allowPositionals: false
+      allowPositionals: false,
     });
 
     if (args.values.help) {
@@ -133,7 +138,7 @@ Output:
     const template = args.values.template as string;
     const outputDir = `dist/${template}`;
     const initDir = `${outputDir}/init`;
-    
+
     // Create output directories
     await Deno.mkdir(outputDir, { recursive: true });
     await Deno.mkdir(initDir, { recursive: true });
@@ -150,7 +155,7 @@ Output:
 
     const wsbContent = generateWSBContent(config);
     const initScript = generateInitScript();
-    
+
     const wsbPath = `${outputDir}/sandbox.wsb`;
     const initPath = `${initDir}/init.ps1`;
     const notifyPath = `${initDir}/notify.ps1`;
@@ -158,22 +163,26 @@ Output:
 
     await Deno.writeTextFile(wsbPath, wsbContent);
     await Deno.writeTextFile(initPath, initScript);
-    
+
     // Copy required scripts
-    const notifyScript = await Deno.readTextFile('src/ps1/notify.ps1');
+    const notifyScript = await Deno.readTextFile("src/ps1/notify.ps1");
     await Deno.writeTextFile(notifyPath, notifyScript);
-    
-    const installWingetScript = await Deno.readTextFile('src/ps1/install-winget.ps1');
+
+    const installWingetScript = await Deno.readTextFile(
+      "src/ps1/install-winget.ps1",
+    );
     await Deno.writeTextFile(installWingetPath, installWingetScript);
-    
+
     console.log(`Files created:`);
     console.log(`  ${wsbPath}`);
     console.log(`  ${initPath}`);
     console.log(`  ${notifyPath}`);
     console.log(`  ${installWingetPath}`);
-    
   } catch (error) {
-    console.error("Error:", error instanceof Error ? error.message : String(error));
+    console.error(
+      "Error:",
+      error instanceof Error ? error.message : String(error),
+    );
     Deno.exit(1);
   }
 }
