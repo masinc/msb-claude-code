@@ -101,11 +101,8 @@ Invoke-Notification -Message "Starting initialization..." -Title "Windows Sandbo
 # Source Scoop installation script
 . "C:\\init\\install-scoop.ps1"
 
-# Install Windows Terminal
-winget install --id Microsoft.WindowsTerminal --source winget --accept-package-agreements --accept-source-agreements
-
-# Install PowerShell
-winget install --id Microsoft.PowerShell --source winget --accept-package-agreements --accept-source-agreements
+# Install packages using WinGet
+. "C:\\init\\install-winget-package.ps1"
 
 # Show completion notification
 Invoke-Notification -Message "Initialization completed successfully!" -Title "Windows Sandbox"
@@ -175,6 +172,7 @@ Output:
     const initPath = `${initDir}/init.ps1`;
     const notifyPath = `${initDir}/notify.ps1`;
     const installWingetPath = `${initDir}/install-winget.ps1`;
+    const installWingetPackagePath = `${initDir}/install-winget-package.ps1`;
     const installScoopPath = `${initDir}/install-scoop.ps1`;
     const disableAppAliasesPath = `${initDir}/disable-app-aliases.ps1`;
 
@@ -195,6 +193,11 @@ Output:
     );
     await Deno.writeTextFile(installScoopPath, installScoopScript);
 
+    const installWingetPackageScript = await Deno.readTextFile(
+      "src/ps1/install-winget-package.ps1",
+    );
+    await Deno.writeTextFile(installWingetPackagePath, installWingetPackageScript);
+
     const disableAppAliasesScript = await Deno.readTextFile(
       "src/ps1/disable-app-aliases.ps1",
     );
@@ -205,6 +208,7 @@ Output:
     console.log(`  ${initPath}`);
     console.log(`  ${notifyPath}`);
     console.log(`  ${installWingetPath}`);
+    console.log(`  ${installWingetPackagePath}`);
     console.log(`  ${installScoopPath}`);
     console.log(`  ${disableAppAliasesPath}`);
   } catch (error) {
