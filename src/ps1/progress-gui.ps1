@@ -159,7 +159,5 @@ function Show-ProgressGUI {
     }
 }
 
-# Start the GUI if this script is run directly
-if ($MyInvocation.InvocationName -eq $MyInvocation.MyCommand.Name) {
-    Show-ProgressGUI
-}
+# Start the GUI (always run when this script is executed)
+Show-ProgressGUI
