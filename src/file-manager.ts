@@ -1,8 +1,6 @@
 export async function copyScriptFiles(initDir: string): Promise<void> {
   const scripts = [
     { src: "src/ps1/notify.ps1", dest: `${initDir}/notify.ps1` },
-    { src: "src/ps1/progress-manager.ps1", dest: `${initDir}/progress-manager.ps1` },
-    { src: "src/ps1/progress-gui.ps1", dest: `${initDir}/progress-gui.ps1` },
     { src: "src/ps1/install-winget.ps1", dest: `${initDir}/install-winget.ps1` },
     { src: "src/ps1/install-scoop.ps1", dest: `${initDir}/install-scoop.ps1` },
     { src: "src/ps1/install-winget-package.ps1", dest: `${initDir}/install-winget-package.ps1` },

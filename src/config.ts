@@ -27,7 +27,7 @@ export function createDefaultConfig(outputDir: string, workspacePath?: string, m
     mappedFolders,
     logonCommand: {
       command:
-        `powershell.exe -ExecutionPolicy Bypass -File "C:\\init\\init.ps1"`,
+        `powershell.exe -WindowStyle Normal -ExecutionPolicy Bypass -File "C:\\init\\init.ps1"`,
     },
     audioInput: "Disable",
     videoInput: "Disable",
