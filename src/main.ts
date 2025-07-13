@@ -86,6 +86,8 @@ async function copyRequiredScripts(initDir: string) {
   const requiredScripts = [
     "notify.ps1",
     "setup-firewall.ps1",
+    "progress-manager.ps1",
+    "progress-gui.ps1",
   ];
 
   console.log(`Copying required scripts for firewall-only preset...`);

@@ -9,8 +9,9 @@ interface ScriptSection {
 export function generateInitScript(presetConfig: PresetConfig, workspaceName?: string): string {
   const sections: string[] = [];
   
-  // Always start with base setup
+  // Always start with base setup and progress system
   sections.push(generateBaseSetup());
+  sections.push(generateProgressSetup(presetConfig, workspaceName));
   
   if (presetConfig.includeDevTools) {
     // Full development environment setup
@@ -38,6 +39,9 @@ Start-Transcript -Path "C:\\init.log" -Append
 
 # Source notification script
 . "C:\\init\\notify.ps1"
+
+# Source progress management script
+. "C:\\init\\progress-manager.ps1"
 
 # Show start notification
 Invoke-Notification -Message "Starting initialization..." -Title "Windows Sandbox"`;
@@ -98,6 +102,9 @@ if (Test-Path "C:\\workspace\\${workspaceName}") {
 
 function generateCompletion(): string {
   return `
+# Complete progress and close GUI
+Stop-ProgressGUI
+
 # Show completion notification
 Invoke-Notification -Message "Initialization completed successfully!" -Title "Windows Sandbox"
 
@@ -108,6 +115,30 @@ Stop-Transcript`;
 function generateScriptStep(step: ScriptSection): string {
   return `
 # ${step.comment}
-Invoke-Notification -Message "${step.notification}" -Title "Windows Sandbox"
-. "C:\\init\\${step.scriptPath}"`;
+Invoke-ProgressStep -StepName "${step.notification}" -ScriptBlock {
+    . "C:\\init\\${step.scriptPath}"
+} -LogMessage "Executing ${step.scriptPath}"`;
+}
+
+function generateProgressSetup(presetConfig: PresetConfig, workspaceName?: string): string {
+  // Calculate total steps
+  let totalSteps = 1; // Base firewall setup
+  
+  if (presetConfig.includeDevTools) {
+    totalSteps += 6; // Dev tools steps
+  }
+  
+  if (workspaceName) {
+    totalSteps += 1; // Workspace opening
+  }
+  
+  return `
+# Initialize progress tracking system
+Initialize-Progress -TotalSteps ${totalSteps}
+
+# Start progress GUI
+Start-ProgressGUI
+
+# Wait a moment for GUI to initialize
+Start-Sleep -Seconds 2`;
 }
