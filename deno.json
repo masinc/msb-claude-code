@@ -1,6 +1,7 @@
 {
   "tasks": {
-    "run": "deno run --allow-read --allow-write --allow-run src/main.ts"
+    "run": "deno run --allow-read --allow-write --allow-run src/main.ts",
+    "clean": "rm -rf dist"
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@1"
