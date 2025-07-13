@@ -150,7 +150,9 @@ function Invoke-ProgressStep {
     } catch {
         $errorMsg = "Failed to execute $StepName : $($_.Exception.Message)"
         Set-ProgressError $errorMsg
-        throw $_
+        Add-ProgressLog "Error details: $($_.ScriptStackTrace)"
+        Write-Warning $errorMsg
+        # Continue execution instead of terminating
     }
 }
 
