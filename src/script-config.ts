@@ -1,4 +1,5 @@
 // Configuration interfaces for PowerShell script templates
+import { validateScriptConfig } from "./validator.ts";
 
 export interface FirewallConfig {
   allowedDomains: {
@@ -157,3 +158,11 @@ export const DEFAULT_SCRIPT_CONFIG: ScriptConfig = {
   toolPaths: DEFAULT_TOOL_PATH_CONFIG,
   notifications: DEFAULT_NOTIFICATION_CONFIG,
 };
+
+// Validate default configuration at module load time
+try {
+  validateScriptConfig(DEFAULT_SCRIPT_CONFIG);
+} catch (error) {
+  console.error("Default script configuration is invalid:", error);
+  throw error;
+}

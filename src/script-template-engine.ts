@@ -1,5 +1,6 @@
 import { renderTemplate, TemplateData } from "./template-engine.ts";
 import { DEFAULT_SCRIPT_CONFIG, ScriptConfig } from "./script-config.ts";
+import { validatePartialConfig } from "./validator.ts";
 
 export interface ScriptTemplateData extends TemplateData {
   firewall: ScriptConfig["firewall"];
@@ -35,18 +36,21 @@ export function renderScriptTemplate(
   templatePath: string,
   scriptConfig: Partial<ScriptConfig> = {},
 ): string {
+  // Validate partial config before processing
+  const validatedPartialConfig = validatePartialConfig(scriptConfig);
+  
   // Deep merge provided config with defaults
   const config: ScriptConfig = {
-    firewall: deepMerge(DEFAULT_SCRIPT_CONFIG.firewall, scriptConfig.firewall),
-    packages: deepMerge(DEFAULT_SCRIPT_CONFIG.packages, scriptConfig.packages),
-    user: deepMerge(DEFAULT_SCRIPT_CONFIG.user, scriptConfig.user),
+    firewall: deepMerge(DEFAULT_SCRIPT_CONFIG.firewall, validatedPartialConfig.firewall),
+    packages: deepMerge(DEFAULT_SCRIPT_CONFIG.packages, validatedPartialConfig.packages),
+    user: deepMerge(DEFAULT_SCRIPT_CONFIG.user, validatedPartialConfig.user),
     toolPaths: deepMerge(
       DEFAULT_SCRIPT_CONFIG.toolPaths,
-      scriptConfig.toolPaths,
+      validatedPartialConfig.toolPaths,
     ),
     notifications: deepMerge(
       DEFAULT_SCRIPT_CONFIG.notifications,
-      scriptConfig.notifications,
+      validatedPartialConfig.notifications,
     ),
   };
 

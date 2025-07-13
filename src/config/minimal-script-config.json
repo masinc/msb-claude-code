@@ -31,7 +31,8 @@
     "scoop": {
       "shimsPath": "$env:USERPROFILE\\scoop\\shims",
       "rootPath": "$env:USERPROFILE\\scoop"
-    }
+    },
+    "mise": {}
   },
   "notifications": {
     "defaultTitle": "Windows Sandbox",
