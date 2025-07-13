@@ -78,13 +78,12 @@ function createDefaultConfig(outputDir: string): WSBConfig {
 }
 
 function generateInitScript(): string {
-  return `$progressPreference = 'silentlyContinue'
-Write-Host "Installing WinGet PowerShell module from PSGallery..."
-Install-PackageProvider -Name NuGet -Force | Out-Null
-Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery | Out-Null
-Write-Host "Using Repair-WinGetPackageManager cmdlet to bootstrap WinGet..."
-Repair-WinGetPackageManager -AllUsers
-Write-Host "Done."`;
+  return `# Source WinGet installation script
+. "C:\\init\\install-winget.ps1"
+
+# Source and call notification script
+. "C:\\init\\notify.ps1"
+Invoke-Notification -Message "WinGet installation completed successfully!" -Title "Windows Sandbox"`;
 }
 
 async function main() {
@@ -146,13 +145,24 @@ Output:
     
     const wsbPath = `${outputDir}/sandbox.wsb`;
     const initPath = `${initDir}/init.ps1`;
+    const notifyPath = `${initDir}/notify.ps1`;
+    const installWingetPath = `${initDir}/install-winget.ps1`;
 
     await Deno.writeTextFile(wsbPath, wsbContent);
     await Deno.writeTextFile(initPath, initScript);
     
+    // Copy required scripts
+    const notifyScript = await Deno.readTextFile('src/ps1/notify.ps1');
+    await Deno.writeTextFile(notifyPath, notifyScript);
+    
+    const installWingetScript = await Deno.readTextFile('src/ps1/install-winget.ps1');
+    await Deno.writeTextFile(installWingetPath, installWingetScript);
+    
     console.log(`Files created:`);
     console.log(`  ${wsbPath}`);
     console.log(`  ${initPath}`);
+    console.log(`  ${notifyPath}`);
+    console.log(`  ${installWingetPath}`);
     
   } catch (error) {
     console.error("Error:", error instanceof Error ? error.message : String(error));
