@@ -20,8 +20,20 @@ async function main() {
     
     console.log(`Using preset: ${presetConfig.name} - ${presetConfig.description}`);
 
-    const outputDir = "dist";
+    const outputDir = (args.values as { output?: string }).output || "dist";
     const initDir = `${outputDir}/init`;
+
+    // Check if output directory already exists
+    try {
+      const stat = await Deno.stat(outputDir);
+      if (stat.isDirectory) {
+        throw new Error(`Output directory '${outputDir}' already exists. Please choose a different output path or remove the existing directory.`);
+      }
+    } catch (error) {
+      if (!(error instanceof Deno.errors.NotFound)) {
+        throw error;
+      }
+    }
 
     // Create output directories
     await Deno.mkdir(outputDir, { recursive: true });

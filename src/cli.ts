@@ -13,6 +13,11 @@ export function parseCliArgs() {
         short: "p",
         default: "default",
       },
+      output: {
+        type: "string",
+        short: "o",
+        default: "dist",
+      },
       help: {
         type: "boolean",
         short: "h",
@@ -27,9 +32,10 @@ export function showHelp(): void {
   console.log(`Usage: deno run src/main.ts [options]
 
 Options:
-  -p, --preset <preset>   Configuration preset (default, firewall-only)
-  -w, --workspace <path>  Workspace directory to mount in sandbox
-  -h, --help             Show this help message
+  -p, --preset <preset>     Configuration preset (default, firewall-only)
+  -w, --workspace <path>    Workspace directory to mount in sandbox
+  -o, --output <directory>  Output directory (default: dist)
+  -h, --help               Show this help message
 
 Presets:
   default       Full development environment with firewall protection
@@ -39,9 +45,10 @@ Examples:
   deno run src/main.ts
   deno run src/main.ts --preset firewall-only
   deno run src/main.ts --workspace C:\\path\\to\\project
-  deno run src/main.ts --preset default --workspace C:\\path\\to\\project
+  deno run src/main.ts --output my-sandbox
+  deno run src/main.ts --preset default --workspace C:\\path\\to\\project --output custom-output
 
 Output:
-  dist\\sandbox.wsb
-  dist\\init\\init.ps1`);
+  <output>\\sandbox.wsb
+  <output>\\init\\init.ps1`);
 }
