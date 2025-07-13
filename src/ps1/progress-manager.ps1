@@ -112,7 +112,7 @@ function Start-ProgressGUI {
         # Start the GUI in a separate process
         $guiScript = "C:\init\progress-gui.ps1"
         if (Test-Path $guiScript) {
-            Start-Process -FilePath "powershell.exe" -ArgumentList "-WindowStyle Hidden", "-ExecutionPolicy Bypass", "-File `"$guiScript`"" -PassThru
+            Start-Process -FilePath "powershell.exe" -ArgumentList "-ExecutionPolicy Bypass", "-File `"$guiScript`"" -PassThru
             Add-ProgressLog "Progress GUI started"
         } else {
             Write-Warning "Progress GUI script not found: $guiScript"
