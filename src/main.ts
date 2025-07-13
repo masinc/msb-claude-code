@@ -1,7 +1,7 @@
 import { generateWSBContent } from "./wsb-generator.ts";
 import { createDefaultConfig } from "./config.ts";
 import { generateInitScript } from "./script-generator.ts";
-import { copyScriptFiles, logCreatedFiles } from "./file-manager.ts";
+import { copyScriptFiles, openOutputFolderOnWindows } from "./file-manager.ts";
 import { parseCliArgs, showHelp } from "./cli.ts";
 
 async function main() {
@@ -31,13 +31,16 @@ async function main() {
     const initPath = `${initDir}/init.ps1`;
     
     await Deno.writeTextFile(wsbPath, wsbContent);
+    console.log(`Created: ${wsbPath}`);
+    
     await Deno.writeTextFile(initPath, initScript);
+    console.log(`Created: ${initPath}`);
 
     // Copy all script files
     await copyScriptFiles(initDir);
 
-    // Log created files
-    logCreatedFiles(outputDir, initDir);
+    // Open output folder on Windows
+    await openOutputFolderOnWindows(outputDir);
   } catch (error) {
     console.error(
       "Error:",

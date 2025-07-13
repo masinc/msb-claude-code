@@ -11,21 +11,21 @@ export async function copyScriptFiles(initDir: string): Promise<void> {
   for (const script of scripts) {
     const content = await Deno.readTextFile(script.src);
     await Deno.writeTextFile(script.dest, content);
+    console.log(`Created: ${script.dest}`);
   }
 }
 
-export function logCreatedFiles(outputDir: string, initDir: string): void {
-  const files = [
-    `${outputDir}/sandbox.wsb`,
-    `${initDir}/init.ps1`,
-    `${initDir}/notify.ps1`,
-    `${initDir}/install-winget.ps1`,
-    `${initDir}/install-winget-package.ps1`,
-    `${initDir}/install-scoop.ps1`,
-    `${initDir}/install-scoop-package.ps1`,
-    `${initDir}/setup-mise.ps1`,
-  ];
 
-  console.log("Files created:");
-  files.forEach(file => console.log(`  ${file}`));
+export async function openOutputFolderOnWindows(outputDir: string): Promise<void> {
+  if (Deno.build.os === "windows") {
+    try {
+      const command = new Deno.Command("explorer", {
+        args: [outputDir],
+      });
+      await command.output();
+      console.log(`Opened output folder: ${outputDir}`);
+    } catch (error) {
+      console.warn(`Failed to open output folder: ${error}`);
+    }
+  }
 }
