@@ -1,5 +1,7 @@
-export function generateInitScript(): string {
-  return `# Start transcript for logging
+import { PresetConfig } from "./presets.ts";
+
+export function generateInitScript(presetConfig: PresetConfig): string {
+  const baseScript = `# Start transcript for logging
 Start-Transcript -Path "C:\\init.log" -Append
 
 # Source notification script
@@ -8,6 +10,11 @@ Start-Transcript -Path "C:\\init.log" -Append
 # Show start notification
 Invoke-Notification -Message "Starting initialization..." -Title "Windows Sandbox"
 
+# Setup firewall security
+Invoke-Notification -Message "Setting up firewall security..." -Title "Windows Sandbox"
+. "C:\\init\\setup-firewall.ps1"`;
+
+  const devToolsScript = `
 # Source WinGet installation script
 Invoke-Notification -Message "Installing WinGet..." -Title "Windows Sandbox"
 . "C:\\init\\install-winget.ps1"
@@ -30,11 +37,14 @@ Invoke-Notification -Message "Setting up mise..." -Title "Windows Sandbox"
 
 # Install Claude Code CLI
 Invoke-Notification -Message "Installing Claude Code CLI..." -Title "Windows Sandbox"
-. "C:\\init\\install-claude-code.ps1"
+. "C:\\init\\install-claude-code.ps1"`;
 
+  const endScript = `
 # Show completion notification
 Invoke-Notification -Message "Initialization completed successfully!" -Title "Windows Sandbox"
 
 # Stop transcript
 Stop-Transcript`;
+
+  return baseScript + (presetConfig.includeDevTools ? devToolsScript : "") + endScript;
 }

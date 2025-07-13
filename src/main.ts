@@ -3,6 +3,7 @@ import { createDefaultConfig } from "./config.ts";
 import { generateInitScript } from "./script-generator.ts";
 import { copyScriptFiles, openOutputFolderOnWindows } from "./file-manager.ts";
 import { parseCliArgs, showHelp } from "./cli.ts";
+import { validatePreset } from "./presets.ts";
 
 async function main() {
   try {
@@ -12,6 +13,12 @@ async function main() {
       showHelp();
       return;
     }
+
+    // Validate preset
+    const presetName = (args.values as { preset?: string }).preset || "default";
+    const presetConfig = validatePreset(presetName);
+    
+    console.log(`Using preset: ${presetConfig.name} - ${presetConfig.description}`);
 
     const outputDir = "dist";
     const initDir = `${outputDir}/init`;
@@ -24,7 +31,7 @@ async function main() {
     const config = createDefaultConfig(outputDir, workspacePath);
 
     const wsbContent = generateWSBContent(config);
-    const initScript = generateInitScript();
+    const initScript = generateInitScript(presetConfig);
 
     // Write main files
     const wsbPath = `${outputDir}/sandbox.wsb`;
@@ -36,8 +43,14 @@ async function main() {
     await Deno.writeTextFile(initPath, initScript);
     console.log(`Created: ${initPath}`);
 
-    // Copy all script files
-    await copyScriptFiles(initDir);
+    // Copy script files (only firewall setup for firewall-only preset)
+    console.log(`includeDevTools: ${presetConfig.includeDevTools}`);
+    if (presetConfig.includeDevTools) {
+      await copyScriptFiles(initDir);
+    } else {
+      // Copy only required scripts for firewall-only preset
+      await copyRequiredScripts(initDir);
+    }
 
     // Open output folder on Windows
     await openOutputFolderOnWindows(outputDir);
@@ -47,6 +60,28 @@ async function main() {
       error instanceof Error ? error.message : String(error),
     );
     Deno.exit(1);
+  }
+}
+
+async function copyRequiredScripts(initDir: string) {
+  const requiredScripts = [
+    "notify.ps1",
+    "setup-firewall.ps1",
+  ];
+
+  console.log(`Copying required scripts for firewall-only preset...`);
+  
+  for (const script of requiredScripts) {
+    const srcPath = `src/ps1/${script}`;
+    const destPath = `${initDir}/${script}`;
+    
+    try {
+      const content = await Deno.readTextFile(srcPath);
+      await Deno.writeTextFile(destPath, content);
+      console.log(`Created: ${destPath}`);
+    } catch (error) {
+      console.error(`Failed to copy ${script}:`, error);
+    }
   }
 }
 
