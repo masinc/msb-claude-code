@@ -27,3 +27,7 @@ Write-Host "Visual Studio Code installation completed."
 Write-Host "Installing Microsoft Visual C++ Redistributable..."
 Install-WinGetPackage -Id Microsoft.VCRedist.2015+.x64 -Source winget -Force
 Write-Host "Microsoft Visual C++ Redistributable installation completed."
+
+# Refresh environment variables
+. "C:\init\refresh-environment.ps1"
+Refresh-Environment

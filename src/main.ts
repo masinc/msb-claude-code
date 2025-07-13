@@ -95,6 +95,7 @@ async function copyRequiredScripts(initDir: string) {
     "install-mise-packages.ps1",
     "install-winget-packages.ps1", 
     "install-scoop-package.ps1",
+    "refresh-environment.ps1",
     "setup-firewall.ps1",
   ];
 

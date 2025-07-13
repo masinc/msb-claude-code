@@ -31,4 +31,8 @@ foreach ($packageId in $packageList) {
     }
 }
 
+# Refresh environment variables
+. "C:\init\refresh-environment.ps1"
+Refresh-Environment
+
 Write-Host "WinGet package installation completed."

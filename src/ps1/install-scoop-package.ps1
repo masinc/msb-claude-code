@@ -38,4 +38,8 @@ if (![string]::IsNullOrWhiteSpace($Packages)) {
     }
 }
 
+# Refresh environment variables
+. "C:\init\refresh-environment.ps1"
+Refresh-Environment
+
 Write-Host "Scoop package installation completed."
