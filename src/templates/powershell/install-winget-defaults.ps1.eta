@@ -1,0 +1,12 @@
+# Install default packages using WinGet
+<% it.packages.wingetDefaults.forEach(pkg => { %>
+
+# Install <%= pkg.name %> using WinGet
+Write-Host "Installing <%= pkg.name %>..."
+Install-WinGetPackage -Id <%= pkg.id %> -Source winget -Force
+Write-Host "<%= pkg.name %> installation completed."
+<% }) %>
+
+# Refresh environment variables
+. "C:\init\refresh-environment.ps1"
+Refresh-Environment

@@ -1,0 +1,40 @@
+# Refresh environment variables and PATH for current PowerShell session
+function Refresh-Environment {
+    Write-Host "Refreshing environment variables..."
+    
+    # Get system and user PATH variables
+    $machinePath = [System.Environment]::GetEnvironmentVariable("PATH", "Machine")
+    $userPath = [System.Environment]::GetEnvironmentVariable("PATH", "User")
+    
+    # Combine and update current session PATH
+    $env:PATH = "$machinePath;$userPath"
+    
+    # Add Scoop shims directory if it exists
+    $scoopShims = "<%= it.toolPaths.scoop.shimsPath %>"
+    if (Test-Path $scoopShims) {
+        $env:PATH = "$scoopShims;$env:PATH"
+        Write-Host "Added Scoop shims to PATH: $scoopShims"
+    }
+    
+<% if (it.toolPaths.mise.binPath) { %>
+    # Add mise bin directory if it exists
+    $miseBin = "<%= it.toolPaths.mise.binPath %>"
+    if (Test-Path $miseBin) {
+        $env:PATH = "$miseBin;$env:PATH"
+        Write-Host "Added mise bin to PATH: $miseBin"
+    }
+<% } %>
+
+<% if (it.toolPaths.additionalPaths && it.toolPaths.additionalPaths.length > 0) { %>
+    # Add additional tool paths
+<% it.toolPaths.additionalPaths.forEach(path => { %>
+    $additionalPath = "<%= path %>"
+    if (Test-Path $additionalPath) {
+        $env:PATH = "$additionalPath;$env:PATH"
+        Write-Host "Added additional path to PATH: $additionalPath"
+    }
+<% }) %>
+<% } %>
+    
+    Write-Host "Environment variables refreshed."
+}

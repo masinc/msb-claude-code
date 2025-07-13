@@ -1,0 +1,46 @@
+{
+  "firewall": {
+    "allowedDomains": {
+      "github": [
+        "github.com",
+        "raw.githubusercontent.com"
+      ],
+      "packageManagers": [
+        "registry.npmjs.org"
+      ],
+      "developmentTools": [],
+      "vscode": [],
+      "claude": []
+    },
+    "timeoutSec": 5,
+    "enableGitHubApi": false
+  },
+  "packages": {
+    "wingetDefaults": [
+      { "id": "Microsoft.PowerShell", "name": "PowerShell" },
+      { "id": "Git.Git", "name": "Git" }
+    ],
+    "scoopDefaults": []
+  },
+  "user": {
+    "username": "WDAGUtilityAccount",
+    "profilePath": "C:\\Users\\WDAGUtilityAccount\\Documents\\PowerShell\\Microsoft.PowerShell_profile.ps1",
+    "documentsPath": "C:\\Users\\WDAGUtilityAccount\\Documents"
+  },
+  "toolPaths": {
+    "scoop": {
+      "shimsPath": "$env:USERPROFILE\\scoop\\shims",
+      "rootPath": "$env:USERPROFILE\\scoop"
+    }
+  },
+  "notifications": {
+    "defaultTitle": "Windows Sandbox",
+    "messages": {
+      "starting": "Starting minimal setup...",
+      "installing": "Installing essential packages...",
+      "completed": "Minimal setup completed!",
+      "ready": "Sandbox is ready."
+    },
+    "showDuration": 3000
+  }
+}
