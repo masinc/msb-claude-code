@@ -109,11 +109,21 @@ function Get-ProgressState {
 
 function Start-ProgressGUI {
     try {
-        # Start the GUI in a separate process
+        # Source the GUI script in the same process
         $guiScript = "C:\init\progress-gui.ps1"
         if (Test-Path $guiScript) {
-            Start-Process -FilePath "powershell.exe" -ArgumentList "-NoExit", "-ExecutionPolicy Bypass", "-File `"$guiScript`"" -PassThru
-            Add-ProgressLog "Progress GUI started"
+            # Load GUI functions but don't show immediately
+            $guiContent = Get-Content $guiScript -Raw
+            # Remove the Show-ProgressGUI call at the end
+            $guiContent = $guiContent -replace 'Show-ProgressGUI\s*$', ''
+            Invoke-Expression $guiContent
+            
+            # Start GUI in background using PowerShell runspace
+            $Global:ProgressGUIRunspace = [powershell]::Create()
+            $Global:ProgressGUIRunspace.AddScript("Initialize-ProgressGUI; [System.Windows.Forms.Application]::Run(`$script:form)")
+            $Global:ProgressGUIAsync = $Global:ProgressGUIRunspace.BeginInvoke()
+            
+            Add-ProgressLog "Progress GUI started in same process"
         } else {
             Write-Warning "Progress GUI script not found: $guiScript"
         }
