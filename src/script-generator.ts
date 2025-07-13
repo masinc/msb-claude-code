@@ -25,6 +25,10 @@ Invoke-Notification -Message "Scoop package installation in progress..." -Title 
 Invoke-Notification -Message "Setting up mise..." -Title "Windows Sandbox"
 . "C:\\init\\setup-mise.ps1"
 
+# Install Claude Code CLI
+Invoke-Notification -Message "Installing Claude Code CLI..." -Title "Windows Sandbox"
+. "C:\\init\\install-claude-code.ps1"
+
 # Show completion notification
 Invoke-Notification -Message "Initialization completed successfully!" -Title "Windows Sandbox"`;
 }
