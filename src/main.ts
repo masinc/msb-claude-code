@@ -78,12 +78,20 @@ function createDefaultConfig(outputDir: string): WSBConfig {
 }
 
 function generateInitScript(): string {
-  return `# Source WinGet installation script
+  return `# Source notification script
+. "C:\\init\\notify.ps1"
+
+# Show start notification
+Invoke-Notification -Message "Starting initialization..." -Title "Windows Sandbox"
+
+# Source WinGet installation script
 . "C:\\init\\install-winget.ps1"
 
-# Source and call notification script
-. "C:\\init\\notify.ps1"
-Invoke-Notification -Message "WinGet installation completed successfully!" -Title "Windows Sandbox"`;
+# Install Windows Terminal
+winget install --id Microsoft.WindowsTerminal --accept-package-agreements --accept-source-agreements
+
+# Show completion notification
+Invoke-Notification -Message "Initialization completed successfully!" -Title "Windows Sandbox"`;
 }
 
 async function main() {
