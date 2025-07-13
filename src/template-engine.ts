@@ -57,7 +57,7 @@ const helpers = {
   escapeXml,
   escapePowerShell,
   join: (...parts: string[]) => parts.filter(Boolean).join(""),
-  joinPath: (...parts: string[]) => join(...parts),
+  joinPath: (first: string, ...rest: string[]) => join(first, ...rest),
 };
 
 Object.entries(helpers).forEach(([name, fn]) => {
