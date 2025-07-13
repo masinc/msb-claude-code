@@ -27,7 +27,7 @@ export function createDefaultConfig(outputDir: string, workspacePath?: string, m
     mappedFolders,
     logonCommand: {
       command:
-        `powershell.exe -WindowStyle Normal -ExecutionPolicy Bypass -File "C:\\init\\init.ps1"`,
+        `cmd.exe /c start "Windows Sandbox Initialization" powershell.exe -NoExit -ExecutionPolicy Bypass -File "C:\\init\\init.ps1"`,
     },
     audioInput: "Disable",
     videoInput: "Disable",
