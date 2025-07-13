@@ -83,11 +83,17 @@ function createDefaultConfig(outputDir: string): WSBConfig {
 }
 
 function generateInitScript(): string {
-  return `# Source notification script
+  return `# Start transcript for logging
+Start-Transcript -Path "C:\\init\\init.log" -Append
+
+# Source notification script
 . "C:\\init\\notify.ps1"
 
 # Show start notification
 Invoke-Notification -Message "Starting initialization..." -Title "Windows Sandbox"
+
+# Disable app execution aliases first
+. "C:\\init\\disable-app-aliases.ps1"
 
 # Source WinGet installation script
 . "C:\\init\\install-winget.ps1"
@@ -102,7 +108,10 @@ winget install --id Microsoft.WindowsTerminal --source winget --accept-package-a
 winget install --id Microsoft.PowerShell --source winget --accept-package-agreements --accept-source-agreements
 
 # Show completion notification
-Invoke-Notification -Message "Initialization completed successfully!" -Title "Windows Sandbox"`;
+Invoke-Notification -Message "Initialization completed successfully!" -Title "Windows Sandbox"
+
+# Stop transcript
+Stop-Transcript`;
 }
 
 async function main() {
@@ -167,6 +176,7 @@ Output:
     const notifyPath = `${initDir}/notify.ps1`;
     const installWingetPath = `${initDir}/install-winget.ps1`;
     const installScoopPath = `${initDir}/install-scoop.ps1`;
+    const disableAppAliasesPath = `${initDir}/disable-app-aliases.ps1`;
 
     await Deno.writeTextFile(wsbPath, wsbContent);
     await Deno.writeTextFile(initPath, initScript);
@@ -185,12 +195,18 @@ Output:
     );
     await Deno.writeTextFile(installScoopPath, installScoopScript);
 
+    const disableAppAliasesScript = await Deno.readTextFile(
+      "src/ps1/disable-app-aliases.ps1",
+    );
+    await Deno.writeTextFile(disableAppAliasesPath, disableAppAliasesScript);
+
     console.log(`Files created:`);
     console.log(`  ${wsbPath}`);
     console.log(`  ${initPath}`);
     console.log(`  ${notifyPath}`);
     console.log(`  ${installWingetPath}`);
     console.log(`  ${installScoopPath}`);
+    console.log(`  ${disableAppAliasesPath}`);
   } catch (error) {
     console.error(
       "Error:",
