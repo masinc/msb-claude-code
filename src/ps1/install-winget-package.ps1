@@ -22,3 +22,8 @@ Write-Host "Node.js LTS installation completed."
 Write-Host "Installing Visual Studio Code..."
 winget install --id Microsoft.VisualStudioCode --source winget --accept-package-agreements --accept-source-agreements
 Write-Host "Visual Studio Code installation completed."
+
+# Install Microsoft Visual C++ Redistributable (latest)
+Write-Host "Installing Microsoft Visual C++ Redistributable..."
+winget install --id Microsoft.VCRedist.2015+.x64 --source winget --accept-package-agreements --accept-source-agreements
+Write-Host "Microsoft Visual C++ Redistributable installation completed."
