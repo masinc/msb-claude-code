@@ -1,0 +1,15 @@
+{
+  "name": "scoop.install",
+  "description": "Install packages using Scoop",
+  "parameters": {
+    "packages": {
+      "type": "array",
+      "required": true
+    }
+  },
+  "config": {
+    "packages": {
+      "scoopDefaults": "{{packages}}"
+    }
+  }
+}

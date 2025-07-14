@@ -69,6 +69,33 @@ export const ScriptConfigSchema = z.object({
   notifications: NotificationConfigSchema,
 });
 
+// Component and preset schemas
+export const ParameterDefSchema = z.object({
+  type: z.enum(["string", "array", "number", "boolean"]),
+  required: z.boolean().optional(),
+  default: z.unknown().optional(),
+  items: z.array(z.string()).optional(),
+});
+
+export const ComponentConfigSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  parameters: z.record(z.string(), ParameterDefSchema).optional(),
+  config: ScriptConfigSchema.partial(),
+});
+
+export const ComponentSpecSchema = z.object({
+  component: z.string(),
+  params: z.record(z.string(), z.unknown()).optional(),
+});
+
+export const PresetConfigSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  components: z.array(z.union([z.string(), ComponentSpecSchema])),
+  config: ScriptConfigSchema.partial().optional(),
+});
+
 // Type exports
 export type FirewallConfig = z.infer<typeof FirewallConfigSchema>;
 export type PackageConfig = z.infer<typeof PackageConfigSchema>;
@@ -76,3 +103,7 @@ export type UserConfig = z.infer<typeof UserConfigSchema>;
 export type ToolPathConfig = z.infer<typeof ToolPathConfigSchema>;
 export type NotificationConfig = z.infer<typeof NotificationConfigSchema>;
 export type ScriptConfig = z.infer<typeof ScriptConfigSchema>;
+export type ParameterDef = z.infer<typeof ParameterDefSchema>;
+export type ComponentConfig = z.infer<typeof ComponentConfigSchema>;
+export type ComponentSpec = z.infer<typeof ComponentSpecSchema>;
+export type PresetConfig = z.infer<typeof PresetConfigSchema>;

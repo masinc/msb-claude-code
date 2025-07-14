@@ -1,0 +1,11 @@
+{
+  "name": "mise.setup",
+  "description": "Setup Mise runtime manager with path configuration",
+  "config": {
+    "toolPaths": {
+      "mise": {
+        "binPath": "$env:USERPROFILE\\.local\\share\\mise\\shims"
+      }
+    }
+  }
+}

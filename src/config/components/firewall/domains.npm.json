@@ -1,0 +1,15 @@
+{
+  "name": "firewall.domains.npm",
+  "description": "NPM and package manager domains",
+  "config": {
+    "firewall": {
+      "allowedDomains": {
+        "packageManagers": [
+          "registry.npmjs.org",
+          "deno.land",
+          "jsr.io"
+        ]
+      }
+    }
+  }
+}

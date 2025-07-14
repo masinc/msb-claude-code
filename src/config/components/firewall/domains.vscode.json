@@ -1,0 +1,21 @@
+{
+  "name": "firewall.domains.vscode",
+  "description": "VS Code related domains",
+  "config": {
+    "firewall": {
+      "allowedDomains": {
+        "vscode": [
+          "marketplace.visualstudio.com",
+          "vscode.download.prss.microsoft.com",
+          "update.code.visualstudio.com",
+          "vscode-sync.trafficmanager.net",
+          "vscode-sync-insiders.trafficmanager.net",
+          "az764295.vo.msecnd.net",
+          "vscode.blob.core.windows.net",
+          "vscode-extensions.s3.amazonaws.com",
+          "login.microsoftonline.com"
+        ]
+      }
+    }
+  }
+}

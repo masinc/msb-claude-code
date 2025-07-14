@@ -1,0 +1,17 @@
+{
+  "name": "firewall.setup",
+  "description": "Initialize Windows Firewall with basic settings",
+  "config": {
+    "firewall": {
+      "timeoutSec": 10,
+      "enableGitHubApi": false,
+      "allowedDomains": {
+        "github": [],
+        "packageManagers": [],
+        "developmentTools": [],
+        "vscode": [],
+        "claude": []
+      }
+    }
+  }
+}

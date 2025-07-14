@@ -1,0 +1,21 @@
+{
+  "name": "firewall.allow",
+  "description": "Allow custom domains and IP ranges",
+  "parameters": {
+    "domains": {
+      "type": "array",
+      "required": false
+    },
+    "cidrs": {
+      "type": "array", 
+      "required": false
+    }
+  },
+  "config": {
+    "firewall": {
+      "allowedDomains": {
+        "additional": "{{domains}}"
+      }
+    }
+  }
+}

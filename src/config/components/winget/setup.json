@@ -1,0 +1,9 @@
+{
+  "name": "winget.setup",
+  "description": "Enable and configure Winget package manager",
+  "config": {
+    "packages": {
+      "wingetDefaults": []
+    }
+  }
+}

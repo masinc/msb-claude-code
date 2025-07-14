@@ -1,10 +1,11 @@
 {
   "tasks": {
     "run": "deno run --allow-read --allow-write --allow-run src/main.ts",
+    "test": "deno test --allow-read --allow-env --allow-write",
     "clean": "rm -rf dist"
   },
   "imports": {
-    "@std/assert": "jsr:@std/assert@1",
+    "@std/assert": "jsr:@std/assert@^1.0.13",
     "@std/path": "jsr:@std/path@^1.1.1",
     "eta": "npm:eta@^3.5.0",
     "zod": "npm:zod@^4.0.5"

@@ -30,7 +30,7 @@ async function main() {
     const extendedArgs = args.values as ExtendedArgs;
 
     // Validate preset
-    const presetName = extendedArgs.preset || "default";
+    const presetName = extendedArgs.preset || "claude-code";
     const presetConfig = validatePreset(presetName);
 
     console.log(

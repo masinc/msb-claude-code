@@ -9,9 +9,10 @@ import {
   renderWingetDefaultsScript,
 } from "./script-template-engine.ts";
 import { DEFAULT_SCRIPT_CONFIG } from "./script-config.ts";
+import { ScriptConfig } from "./schema.ts";
 
-Deno.test("renderFirewallScript should generate firewall script with default config", () => {
-  const result = renderFirewallScript();
+Deno.test("renderFirewallScript should generate firewall script with default config", async () => {
+  const result = await renderFirewallScript();
 
   assertStringIncludes(
     result,
@@ -26,7 +27,7 @@ Deno.test("renderFirewallScript should generate firewall script with default con
   );
 });
 
-Deno.test("renderFirewallScript should handle custom domains", () => {
+Deno.test("renderFirewallScript should handle custom domains", async () => {
   const customConfig = {
     allowedDomains: {
       github: ["github.com"],
@@ -40,7 +41,7 @@ Deno.test("renderFirewallScript should handle custom domains", () => {
     enableGitHubApi: false,
   };
 
-  const result = renderFirewallScript(customConfig);
+  const result = await renderFirewallScript(customConfig);
 
   assertStringIncludes(result, "github.com");
   assertStringIncludes(result, "custom-registry.com");
@@ -49,8 +50,8 @@ Deno.test("renderFirewallScript should handle custom domains", () => {
   assertEquals(result.includes("Invoke-RestMethod"), false); // GitHub API disabled
 });
 
-Deno.test("renderWingetDefaultsScript should generate package installation script", () => {
-  const result = renderWingetDefaultsScript();
+Deno.test("renderWingetDefaultsScript should generate package installation script", async () => {
+  const result = await renderWingetDefaultsScript();
 
   assertStringIncludes(result, "Installing Windows Terminal...");
   assertStringIncludes(
@@ -66,7 +67,7 @@ Deno.test("renderWingetDefaultsScript should generate package installation scrip
   assertStringIncludes(result, "Install-WinGetPackage -Id Git.Git");
 });
 
-Deno.test("renderWingetDefaultsScript should handle custom packages", () => {
+Deno.test("renderWingetDefaultsScript should handle custom packages", async () => {
   const customConfig = {
     wingetDefaults: [
       { id: "Custom.Package1", name: "Custom Package 1" },
@@ -75,7 +76,7 @@ Deno.test("renderWingetDefaultsScript should handle custom packages", () => {
     scoopDefaults: [],
   };
 
-  const result = renderWingetDefaultsScript(customConfig);
+  const result = await renderWingetDefaultsScript(customConfig);
 
   assertStringIncludes(result, "Installing Custom Package 1...");
   assertStringIncludes(result, "Install-WinGetPackage -Id Custom.Package1");
@@ -83,8 +84,8 @@ Deno.test("renderWingetDefaultsScript should handle custom packages", () => {
   assertStringIncludes(result, "Install-WinGetPackage -Id Custom.Package2");
 });
 
-Deno.test("renderMiseSetupScript should generate mise setup with default user", () => {
-  const result = renderMiseSetupScript();
+Deno.test("renderMiseSetupScript should generate mise setup with default user", async () => {
+  const result = await renderMiseSetupScript();
 
   assertStringIncludes(result, "Setting up mise...");
   assertStringIncludes(
@@ -94,7 +95,7 @@ Deno.test("renderMiseSetupScript should generate mise setup with default user", 
   assertStringIncludes(result, "mise activate pwsh");
 });
 
-Deno.test("renderMiseSetupScript should handle custom user config", () => {
+Deno.test("renderMiseSetupScript should handle custom user config", async () => {
   const customConfig = {
     username: "CustomUser",
     profilePath:
@@ -102,7 +103,7 @@ Deno.test("renderMiseSetupScript should handle custom user config", () => {
     documentsPath: "C:\\Users\\CustomUser\\Documents",
   };
 
-  const result = renderMiseSetupScript(customConfig);
+  const result = await renderMiseSetupScript(customConfig);
 
   assertStringIncludes(
     result,
@@ -110,8 +111,8 @@ Deno.test("renderMiseSetupScript should handle custom user config", () => {
   );
 });
 
-Deno.test("renderScoopPackageScript should generate scoop installation script", () => {
-  const result = renderScoopPackageScript();
+Deno.test("renderScoopPackageScript should generate scoop installation script", async () => {
+  const result = await renderScoopPackageScript();
 
   assertStringIncludes(result, "Installing packages with Scoop...");
   assertStringIncludes(result, "scoop install ripgrep");
@@ -120,7 +121,7 @@ Deno.test("renderScoopPackageScript should generate scoop installation script", 
   assertStringIncludes(result, "$env:SCOOP_PACKAGES");
 });
 
-Deno.test("renderScoopPackageScript should handle custom default packages", () => {
+Deno.test("renderScoopPackageScript should handle custom default packages", async () => {
   const customConfig = {
     wingetDefaults: [],
     scoopDefaults: [
@@ -129,15 +130,15 @@ Deno.test("renderScoopPackageScript should handle custom default packages", () =
     ],
   };
 
-  const result = renderScoopPackageScript(customConfig);
+  const result = await renderScoopPackageScript(customConfig);
 
   assertStringIncludes(result, "scoop install git");
   assertStringIncludes(result, "scoop install curl");
   assertEquals(result.includes("scoop install ripgrep"), false);
 });
 
-Deno.test("renderRefreshEnvironmentScript should generate environment refresh script", () => {
-  const result = renderRefreshEnvironmentScript();
+Deno.test("renderRefreshEnvironmentScript should generate environment refresh script", async () => {
+  const result = await renderRefreshEnvironmentScript();
 
   assertStringIncludes(result, "Refreshing environment variables...");
   assertStringIncludes(
@@ -150,7 +151,7 @@ Deno.test("renderRefreshEnvironmentScript should generate environment refresh sc
   );
 });
 
-Deno.test("renderRefreshEnvironmentScript should handle custom tool paths", () => {
+Deno.test("renderRefreshEnvironmentScript should handle custom tool paths", async () => {
   const customConfig = {
     scoop: {
       shimsPath: "C:\\CustomScoop\\shims",
@@ -162,7 +163,7 @@ Deno.test("renderRefreshEnvironmentScript should handle custom tool paths", () =
     additionalPaths: ["C:\\CustomTool\\bin", "C:\\AnotherTool\\bin"],
   };
 
-  const result = renderRefreshEnvironmentScript(customConfig);
+  const result = await renderRefreshEnvironmentScript(customConfig);
 
   assertStringIncludes(result, '$scoopShims = "C:\\CustomScoop\\shims"');
   assertStringIncludes(result, '$miseBin = "C:\\CustomMise\\bin"');
@@ -170,8 +171,8 @@ Deno.test("renderRefreshEnvironmentScript should handle custom tool paths", () =
   assertStringIncludes(result, '$additionalPath = "C:\\AnotherTool\\bin"');
 });
 
-Deno.test("renderNotifyScript should generate notification script", () => {
-  const result = renderNotifyScript();
+Deno.test("renderNotifyScript should generate notification script", async () => {
+  const result = await renderNotifyScript();
 
   assertStringIncludes(result, "function Invoke-Notification");
   assertStringIncludes(
@@ -183,7 +184,7 @@ Deno.test("renderNotifyScript should generate notification script", () => {
   assertStringIncludes(result, "Ready to use the sandbox environment.");
 });
 
-Deno.test("renderNotifyScript should handle custom notification config", () => {
+Deno.test("renderNotifyScript should handle custom notification config", async () => {
   const customConfig = {
     defaultTitle: "Custom Sandbox",
     messages: {
@@ -195,7 +196,7 @@ Deno.test("renderNotifyScript should handle custom notification config", () => {
     showDuration: 3000,
   };
 
-  const result = renderNotifyScript(customConfig);
+  const result = await renderNotifyScript(customConfig);
 
   assertStringIncludes(result, '[string]$Title = "Custom Sandbox"');
   assertStringIncludes(result, '[string]$Message = "Custom completed!"');
@@ -203,16 +204,24 @@ Deno.test("renderNotifyScript should handle custom notification config", () => {
   assertStringIncludes(result, "Custom ready!");
 });
 
-Deno.test("renderScriptTemplate should merge partial config with defaults", () => {
+Deno.test("renderScriptTemplate should merge partial config with defaults", async () => {
   const partialConfig = {
     firewall: {
       timeoutSec: 15,
+      allowedDomains: {
+        github: ["github.com"],
+        packageManagers: [],
+        developmentTools: [],
+        vscode: [],
+        claude: [],
+      },
+      enableGitHubApi: true,
     } as Partial<typeof DEFAULT_SCRIPT_CONFIG.firewall>,
   };
 
-  const result = renderScriptTemplate(
+  const result = await renderScriptTemplate(
     "powershell/setup-firewall.ps1.eta",
-    partialConfig,
+    partialConfig as Partial<ScriptConfig>,
   );
 
   // Should use custom timeout
@@ -221,8 +230,8 @@ Deno.test("renderScriptTemplate should merge partial config with defaults", () =
   assertStringIncludes(result, "github.com");
 });
 
-Deno.test("renderScriptTemplate should handle empty config", () => {
-  const result = renderScriptTemplate("powershell/notify.ps1.eta", {});
+Deno.test("renderScriptTemplate should handle empty config", async () => {
+  const result = await renderScriptTemplate("powershell/notify.ps1.eta", {});
 
   // Should use all defaults
   assertStringIncludes(result, "Windows Sandbox");

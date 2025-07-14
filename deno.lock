@@ -1,7 +1,7 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@std/assert@1": "1.0.13",
+    "jsr:@std/assert@^1.0.13": "1.0.13",
     "jsr:@std/internal@^1.0.6": "1.0.9",
     "jsr:@std/internal@^1.0.9": "1.0.9",
     "jsr:@std/path@^1.1.1": "1.1.1",
@@ -45,7 +45,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@std/assert@1",
+      "jsr:@std/assert@^1.0.13",
       "jsr:@std/path@^1.1.1",
       "npm:eta@^3.5.0",
       "npm:zod@^4.0.5"

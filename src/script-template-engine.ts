@@ -1,6 +1,7 @@
 import { renderTemplate, TemplateData } from "./template-engine.ts";
 import { DEFAULT_SCRIPT_CONFIG, ScriptConfig } from "./script-config.ts";
 import { validatePartialConfig } from "./validator.ts";
+import { presetManager } from "./preset-manager.ts";
 
 export interface ScriptTemplateData extends TemplateData {
   firewall: ScriptConfig["firewall"];
@@ -22,9 +23,9 @@ function deepMerge<T>(defaults: T, overrides: Partial<T> | undefined): T {
         typeof override === "object" && override !== null &&
         !Array.isArray(override)
       ) {
-        (result as any)[key] = deepMerge((defaults as any)[key], override);
+        (result as Record<string, unknown>)[key] = deepMerge((defaults as Record<string, unknown>)[key], override);
       } else {
-        (result as any)[key] = override;
+        (result as Record<string, unknown>)[key] = override;
       }
     }
   }
@@ -32,27 +33,33 @@ function deepMerge<T>(defaults: T, overrides: Partial<T> | undefined): T {
   return result;
 }
 
-export function renderScriptTemplate(
+export async function renderScriptTemplate(
   templatePath: string,
-  scriptConfig: Partial<ScriptConfig> = {},
-): string {
-  // Validate partial config before processing
-  const validatedPartialConfig = validatePartialConfig(scriptConfig);
-  
-  // Deep merge provided config with defaults
-  const config: ScriptConfig = {
-    firewall: deepMerge(DEFAULT_SCRIPT_CONFIG.firewall, validatedPartialConfig.firewall),
-    packages: deepMerge(DEFAULT_SCRIPT_CONFIG.packages, validatedPartialConfig.packages),
-    user: deepMerge(DEFAULT_SCRIPT_CONFIG.user, validatedPartialConfig.user),
-    toolPaths: deepMerge(
-      DEFAULT_SCRIPT_CONFIG.toolPaths,
-      validatedPartialConfig.toolPaths,
-    ),
-    notifications: deepMerge(
-      DEFAULT_SCRIPT_CONFIG.notifications,
-      validatedPartialConfig.notifications,
-    ),
-  };
+  configOrPreset: string | Partial<ScriptConfig> = {},
+): Promise<string> {
+  let config: ScriptConfig;
+
+  if (typeof configOrPreset === 'string') {
+    // Load preset
+    config = await presetManager.loadPreset(configOrPreset);
+  } else {
+    // Use provided config with defaults
+    const validatedPartialConfig = validatePartialConfig(configOrPreset);
+    
+    config = {
+      firewall: deepMerge(DEFAULT_SCRIPT_CONFIG.firewall, validatedPartialConfig.firewall),
+      packages: deepMerge(DEFAULT_SCRIPT_CONFIG.packages, validatedPartialConfig.packages),
+      user: deepMerge(DEFAULT_SCRIPT_CONFIG.user, validatedPartialConfig.user),
+      toolPaths: deepMerge(
+        DEFAULT_SCRIPT_CONFIG.toolPaths,
+        validatedPartialConfig.toolPaths,
+      ),
+      notifications: deepMerge(
+        DEFAULT_SCRIPT_CONFIG.notifications,
+        validatedPartialConfig.notifications,
+      ),
+    };
+  }
 
   const templateData: ScriptTemplateData = {
     firewall: config.firewall,
@@ -66,56 +73,56 @@ export function renderScriptTemplate(
 }
 
 // Convenience functions for specific scripts
-export function renderFirewallScript(
+export async function renderFirewallScript(
   firewallConfig?: Partial<ScriptConfig["firewall"]>,
-): string {
-  return renderScriptTemplate(
+): Promise<string> {
+  return await renderScriptTemplate(
     "powershell/setup-firewall.ps1.eta",
-    firewallConfig ? { firewall: firewallConfig } : {},
+    firewallConfig ? { firewall: firewallConfig } as Partial<ScriptConfig> : {},
   );
 }
 
-export function renderWingetDefaultsScript(
+export async function renderWingetDefaultsScript(
   packageConfig?: Partial<ScriptConfig["packages"]>,
-): string {
-  return renderScriptTemplate(
+): Promise<string> {
+  return await renderScriptTemplate(
     "powershell/install-winget-defaults.ps1.eta",
-    packageConfig ? { packages: packageConfig } : {},
+    packageConfig ? { packages: packageConfig } as Partial<ScriptConfig> : {},
   );
 }
 
-export function renderMiseSetupScript(
+export async function renderMiseSetupScript(
   userConfig?: Partial<ScriptConfig["user"]>,
-): string {
-  return renderScriptTemplate(
+): Promise<string> {
+  return await renderScriptTemplate(
     "powershell/setup-mise.ps1.eta",
-    userConfig ? { user: userConfig } : {},
+    userConfig ? { user: userConfig } as Partial<ScriptConfig> : {},
   );
 }
 
-export function renderScoopPackageScript(
+export async function renderScoopPackageScript(
   packageConfig?: Partial<ScriptConfig["packages"]>,
-): string {
-  return renderScriptTemplate(
+): Promise<string> {
+  return await renderScriptTemplate(
     "powershell/install-scoop-package.ps1.eta",
-    packageConfig ? { packages: packageConfig } : {},
+    packageConfig ? { packages: packageConfig } as Partial<ScriptConfig> : {},
   );
 }
 
-export function renderRefreshEnvironmentScript(
+export async function renderRefreshEnvironmentScript(
   toolPathConfig?: Partial<ScriptConfig["toolPaths"]>,
-): string {
-  return renderScriptTemplate(
+): Promise<string> {
+  return await renderScriptTemplate(
     "powershell/refresh-environment.ps1.eta",
-    toolPathConfig ? { toolPaths: toolPathConfig } : {},
+    toolPathConfig ? { toolPaths: toolPathConfig } as Partial<ScriptConfig> : {},
   );
 }
 
-export function renderNotifyScript(
+export async function renderNotifyScript(
   notificationConfig?: Partial<ScriptConfig["notifications"]>,
-): string {
-  return renderScriptTemplate(
+): Promise<string> {
+  return await renderScriptTemplate(
     "powershell/notify.ps1.eta",
-    notificationConfig ? { notifications: notificationConfig } : {},
+    notificationConfig ? { notifications: notificationConfig } as Partial<ScriptConfig> : {},
   );
 }

@@ -1,0 +1,17 @@
+{
+  "name": "firewall.domains.github",
+  "description": "GitHub domains and API access",
+  "config": {
+    "firewall": {
+      "allowedDomains": {
+        "github": [
+          "github.com",
+          "raw.githubusercontent.com",
+          "codeload.github.com",
+          "objects.githubusercontent.com"
+        ]
+      },
+      "enableGitHubApi": true
+    }
+  }
+}

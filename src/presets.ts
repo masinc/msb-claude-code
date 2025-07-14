@@ -5,15 +5,26 @@ export interface PresetConfig {
 }
 
 export const PRESETS: Record<string, PresetConfig> = {
+  "claude-code": {
+    includeDevTools: true,
+    name: "Claude Code",
+    description: "Full development environment with firewall protection",
+  },
+  minimal: {
+    includeDevTools: false,
+    name: "Minimal",
+    description: "Minimal configuration (basic tools and firewall)",
+  },
+  // Legacy aliases for backward compatibility
   default: {
     includeDevTools: true,
-    name: "Default",
-    description: "Full development environment with firewall protection",
+    name: "Default (legacy)",
+    description: "Full development environment with firewall protection (use 'claude-code' instead)",
   },
   "firewall-only": {
     includeDevTools: false,
-    name: "Firewall Only",
-    description: "Firewall configuration only (no development tools)",
+    name: "Firewall Only (legacy)",
+    description: "Firewall configuration only (use 'minimal' instead)",
   },
 };
 

@@ -1,0 +1,15 @@
+{
+  "name": "winget.install",
+  "description": "Install packages using Winget",
+  "parameters": {
+    "packages": {
+      "type": "array",
+      "required": true
+    }
+  },
+  "config": {
+    "packages": {
+      "wingetDefaults": "{{packages}}"
+    }
+  }
+}

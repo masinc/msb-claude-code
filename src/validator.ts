@@ -11,7 +11,7 @@ export class ConfigValidationError extends Error {
   }
 
   getDetailedErrors(): string[] {
-    return this.zodError.errors.map((error) => {
+    return this.zodError.issues.map((error) => {
       const path = error.path.join(".");
       return `${path}: ${error.message}`;
     });
@@ -24,7 +24,7 @@ export function validateScriptConfig(config: unknown): ScriptConfig {
   } catch (error) {
     if (error instanceof ZodError) {
       const errorMessage = `Configuration validation failed:\n${
-        error.errors.map((e) => `  - ${e.path.join(".")}: ${e.message}`).join(
+        error.issues.map((e) => `  - ${e.path.join(".")}: ${e.message}`).join(
           "\n",
         )
       }`;
@@ -40,7 +40,7 @@ export function validatePartialConfig(config: unknown): Partial<ScriptConfig> {
   } catch (error) {
     if (error instanceof ZodError) {
       const errorMessage = `Partial configuration validation failed:\n${
-        error.errors.map((e) => `  - ${e.path.join(".")}: ${e.message}`).join(
+        error.issues.map((e) => `  - ${e.path.join(".")}: ${e.message}`).join(
           "\n",
         )
       }`;
@@ -95,6 +95,6 @@ export async function loadAndValidateConfigFromFile(
     if (error instanceof SyntaxError) {
       throw new Error(`JSON parse error in ${filePath}: ${error.message}`);
     }
-    throw new Error(`Failed to load config from ${filePath}: ${error.message}`);
+    throw new Error(`Failed to load config from ${filePath}: ${error instanceof Error ? error.message : String(error)}`);
   }
 }

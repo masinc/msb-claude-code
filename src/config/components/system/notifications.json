@@ -1,0 +1,23 @@
+{
+  "name": "system.notifications",
+  "description": "Configure notification triggers and messages",
+  "parameters": {
+    "triggers": {
+      "type": "array",
+      "required": true,
+      "items": ["starting", "installing", "installed", "completed"]
+    }
+  },
+  "config": {
+    "notifications": {
+      "defaultTitle": "Windows Sandbox",
+      "showDuration": 5000,
+      "messages": {
+        "starting": "Starting setup...",
+        "installing": "Installing packages...",
+        "installed": "Packages installed successfully.",
+        "completed": "Setup completed!"
+      }
+    }
+  }
+}

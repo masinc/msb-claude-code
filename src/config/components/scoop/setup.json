@@ -1,0 +1,15 @@
+{
+  "name": "scoop.setup",
+  "description": "Setup Scoop package manager with path configuration",
+  "config": {
+    "toolPaths": {
+      "scoop": {
+        "shimsPath": "$env:USERPROFILE\\scoop\\shims",
+        "rootPath": "$env:USERPROFILE\\scoop"
+      }
+    },
+    "packages": {
+      "scoopDefaults": []
+    }
+  }
+}

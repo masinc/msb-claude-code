@@ -1,0 +1,43 @@
+{
+  "name": "claude-code",
+  "description": "Full development environment for Claude Code",
+  "components": [
+    "winget.setup",
+    {
+      "component": "winget.install",
+      "params": {
+        "packages": [
+          { "id": "Microsoft.PowerShell", "name": "PowerShell" },
+          { "id": "Git.Git", "name": "Git" },
+          { "id": "Microsoft.WindowsTerminal", "name": "Windows Terminal" },
+          { "id": "Microsoft.VisualStudioCode", "name": "Visual Studio Code" },
+          { "id": "OpenJS.NodeJS.LTS", "name": "Node.js LTS" },
+          { "id": "Microsoft.VCRedist.2015+.x64", "name": "Microsoft Visual C++ Redistributable" }
+        ]
+      }
+    },
+    "scoop.setup",
+    {
+      "component": "scoop.install",
+      "params": {
+        "packages": [
+          { "name": "ripgrep", "description": "Fast text search tool" },
+          { "name": "fd", "description": "Fast file finder" },
+          { "name": "mise", "description": "Runtime version manager" }
+        ]
+      }
+    },
+    "mise.setup",
+    "firewall.setup",
+    "firewall.domains.github",
+    "firewall.domains.vscode",
+    "firewall.domains.npm",
+    "firewall.domains.claude",
+    {
+      "component": "system.notifications",
+      "params": {
+        "triggers": ["starting", "installing", "installed", "completed"]
+      }
+    }
+  ]
+}

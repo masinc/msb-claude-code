@@ -1,0 +1,16 @@
+{
+  "name": "firewall.domains.claude",
+  "description": "Claude related domains",
+  "config": {
+    "firewall": {
+      "allowedDomains": {
+        "claude": [
+          "api.anthropic.com",
+          "sentry.io",
+          "statsig.anthropic.com",
+          "statsig.com"
+        ]
+      }
+    }
+  }
+}

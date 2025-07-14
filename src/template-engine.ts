@@ -9,7 +9,7 @@ const eta = new Eta({
   views: join(Deno.cwd(), "src", "templates"),
   autoEscape: false,
   cache: false,
-  debug: Deno.env.get("DEBUG") === "true",
+  debug: false, // Deno.env.get("DEBUG") === "true",
 });
 
 export function renderTemplate(
@@ -19,7 +19,7 @@ export function renderTemplate(
   return eta.render(templatePath, data);
 }
 
-export async function renderTemplateAsync(
+export function renderTemplateAsync(
   templatePath: string,
   data: TemplateData,
 ): Promise<string> {
@@ -47,7 +47,7 @@ eta.configure({
   plugins: [
     {
       processFnString: (fnString: string) => fnString,
-      processAST: (ast: any) => ast,
+      processAST: (ast: unknown) => ast,
       processTemplate: (template: string) => template,
     },
   ],
@@ -62,7 +62,7 @@ const helpers = {
 
 Object.entries(helpers).forEach(([name, fn]) => {
   eta.config.varName = "it";
-  (eta.config as any)[name] = fn;
+  (eta.config as unknown as Record<string, unknown>)[name] = fn;
 });
 
 export { eta };
