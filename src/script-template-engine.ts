@@ -9,6 +9,11 @@ export interface ScriptTemplateData extends TemplateData {
   user: ScriptConfig["user"];
   toolPaths: ScriptConfig["toolPaths"];
   notifications: ScriptConfig["notifications"];
+  // Legacy compatibility for old template format
+  presetConfig?: {
+    includeDevTools: boolean;
+  };
+  packageOptions?: Record<string, unknown>;
 }
 
 function deepMerge<T>(defaults: T, overrides: Partial<T> | undefined): T {
@@ -67,6 +72,11 @@ export async function renderScriptTemplate(
     user: config.user,
     toolPaths: config.toolPaths,
     notifications: config.notifications,
+    // Legacy compatibility for old template format
+    presetConfig: {
+      includeDevTools: config.packages.wingetDefaults.length > 0 || config.packages.scoopDefaults.length > 0
+    },
+    packageOptions: {}
   };
 
   return renderTemplate(templatePath, templateData);

@@ -1,9 +1,9 @@
 import { generateWSBContent } from "./wsb-generator.ts";
 import { createDefaultConfig } from "./config.ts";
-import { generateInitScript } from "./script-generator.ts";
 import { copyScriptFiles, openOutputFolderOnWindows } from "./file-manager.ts";
 import { parseCliArgs, showHelp } from "./cli.ts";
-import { validatePreset } from "./presets.ts";
+import { configLoader } from "./config-loader.ts";
+import { ScriptConfig } from "./schema.ts";
 
 async function main() {
   try {
@@ -18,24 +18,38 @@ async function main() {
     interface ExtendedArgs {
       workspace?: string;
       preset?: string;
+      config?: string;
       output?: string;
       memory?: string;
-      mise?: string;
-      scoop?: string;
-      "winget-id"?: string;
       "protected-client"?: boolean;
       help?: boolean;
     }
 
     const extendedArgs = args.values as ExtendedArgs;
 
-    // Validate preset
-    const presetName = extendedArgs.preset || "claude-code";
-    const presetConfig = validatePreset(presetName);
+    // Validate mutual exclusivity of preset and config
+    if (extendedArgs.preset && extendedArgs.config) {
+      throw new Error("--preset and --config options are mutually exclusive");
+    }
 
-    console.log(
-      `Using preset: ${presetConfig.name} - ${presetConfig.description}`,
-    );
+    // Load configuration
+    let scriptConfig: ScriptConfig;
+    let configSourceName: string;
+
+    if (extendedArgs.config) {
+      // Load from config file
+      const configFile = await configLoader.loadConfigFile(extendedArgs.config);
+      scriptConfig = await configLoader.loadConfig(configFile);
+      configSourceName = `config file: ${extendedArgs.config}`;
+    } else {
+      // Use preset (default to claude-code if no preset specified)
+      const { presetManager } = await import("./preset-manager.ts");
+      const presetName = extendedArgs.preset || "claude-code";
+      scriptConfig = await presetManager.loadPreset(presetName);
+      configSourceName = `preset: ${presetName}`;
+    }
+
+    console.log(`Using ${configSourceName}`);
 
     const outputDir = extendedArgs.output || "dist";
     const memoryGB = parseInt(extendedArgs.memory || "8");
@@ -67,9 +81,6 @@ async function main() {
     await Deno.mkdir(initDir, { recursive: true });
 
     const workspacePath = extendedArgs.workspace;
-    const workspaceName = workspacePath
-      ? workspacePath.split(/[/\\]/).pop() || undefined
-      : undefined;
     const config = createDefaultConfig(
       outputDir,
       workspacePath,
@@ -77,18 +88,13 @@ async function main() {
       extendedArgs["protected-client"] || false,
     );
 
-    // Extract package options
-    const packageOptions = {
-      mise: extendedArgs.mise || "",
-      scoop: extendedArgs.scoop || "",
-      wingetId: extendedArgs["winget-id"] || "",
-    };
-
     const wsbContent = generateWSBContent(config);
-    const initScript = generateInitScript(
-      presetConfig,
-      workspaceName,
-      packageOptions,
+    
+    // Use new script template engine for init script
+    const { renderScriptTemplate } = await import("./script-template-engine.ts");
+    const initScript = await renderScriptTemplate(
+      "powershell/init.ps1.eta",
+      scriptConfig
     );
 
     // Write main files
@@ -101,14 +107,8 @@ async function main() {
     await Deno.writeTextFile(initPath, initScript);
     console.log(`Created: ${initPath}`);
 
-    // Copy script files (only firewall setup for firewall-only preset)
-    console.log(`includeDevTools: ${presetConfig.includeDevTools}`);
-    if (presetConfig.includeDevTools) {
-      await copyScriptFiles(initDir);
-    } else {
-      // Copy only required scripts for firewall-only preset
-      await copyRequiredScripts(initDir);
-    }
+    // Copy all PowerShell scripts
+    await copyScriptFiles(initDir);
 
     // Open output folder on Windows
     await openOutputFolderOnWindows(outputDir);
@@ -118,32 +118,6 @@ async function main() {
       error instanceof Error ? error.message : String(error),
     );
     Deno.exit(1);
-  }
-}
-
-async function copyRequiredScripts(initDir: string) {
-  const requiredScripts = [
-    "notify.ps1",
-    "install-mise-packages.ps1",
-    "install-winget-custom.ps1",
-    "install-scoop-package.ps1",
-    "refresh-environment.ps1",
-    "setup-firewall.ps1",
-  ];
-
-  console.log(`Copying required scripts for firewall-only preset...`);
-
-  for (const script of requiredScripts) {
-    const srcPath = `src/ps1/${script}`;
-    const destPath = `${initDir}/${script}`;
-
-    try {
-      const content = await Deno.readTextFile(srcPath);
-      await Deno.writeTextFile(destPath, content);
-      console.log(`Created: ${destPath}`);
-    } catch (error) {
-      console.error(`Failed to copy ${script}:`, error);
-    }
   }
 }
 
